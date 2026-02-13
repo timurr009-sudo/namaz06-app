@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%231a3a3a'/%3E%3Ctext x='90' y='90' font-size='90' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a3a3a'/%3E%3Ctext x='16' y='16' font-size='20' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -29,21 +29,50 @@
             overflow-x: hidden;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            perspective: 1500px;
         }
 
         .app-container {
             max-width: 430px;
             margin: 0 auto;
-            background: #0a1f1f;
+            background: linear-gradient(135deg, #0a1f1f 0%, #0f2828 50%, #0a1f1f 100%);
             min-height: 100vh;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 80px rgba(100, 200, 180, 0.1);
+            position: relative;
+        }
+
+        /* Звезды на фоне */
+        .app-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent);
+            background-size: 200% 200%;
+            animation: twinkle 10s ease-in-out infinite;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
         }
 
         .header-section {
             position: relative;
-            height: 400px;
-            background: linear-gradient(135deg, #1a3a3a 0%, #2d4f4f 100%);
+            height: 420px;
+            background: linear-gradient(135deg, #1a3a3a 0%, #2d4f4f 50%, #1a3a3a 100%);
             overflow: hidden;
+            transform-style: preserve-3d;
         }
 
         .header-bg {
@@ -53,13 +82,14 @@
             width: 100%;
             height: 100%;
             background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80') center/cover;
-            opacity: 0.5;
-            animation: slowZoom 30s ease-in-out infinite alternate;
+            opacity: 0.4;
+            animation: slowZoomRotate 40s ease-in-out infinite alternate;
+            transform: translateZ(-50px) scale(1.2);
         }
 
-        @keyframes slowZoom {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+        @keyframes slowZoomRotate {
+            0% { transform: translateZ(-50px) scale(1.2) rotate(0deg); }
+            100% { transform: translateZ(-50px) scale(1.3) rotate(2deg); }
         }
 
         .header-overlay {
@@ -68,64 +98,90 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, rgba(26, 58, 58, 0.4) 0%, rgba(10, 31, 31, 0.95) 100%);
+            background: 
+                linear-gradient(135deg, rgba(26, 58, 58, 0.6) 0%, rgba(10, 31, 31, 0.9) 100%),
+                radial-gradient(circle at 20% 80%, rgba(100, 200, 180, 0.1) 0%, transparent 50%);
         }
 
         .header-content {
             position: relative;
             z-index: 10;
             padding: 20px 24px;
+            transform-style: preserve-3d;
         }
 
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            animation: fadeInDown 0.6s ease;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { 
+                opacity: 0; 
+                transform: translateY(-30px) rotateX(20deg);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) rotateX(0);
+            }
         }
 
         .app-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .app-logo:hover {
+            transform: translateZ(10px) scale(1.05);
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            animation: pulse 2s ease-in-out infinite;
+            font-size: 22px;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 
+                0 8px 32px rgba(100, 200, 180, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotateY(0deg);
+            }
+            50% { 
+                transform: translateY(-10px) rotateY(10deg);
+            }
         }
 
         .app-title h1 {
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1px;
             text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, #64c8b4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .app-title p {
-            font-size: 10px;
-            font-weight: 500;
-            opacity: 0.7;
-            letter-spacing: 1px;
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.8;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
@@ -135,74 +191,135 @@
         }
 
         .action-btn {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transform-style: preserve-3d;
+        }
+
+        .action-btn:hover {
+            transform: translateZ(20px) scale(1.1) rotateZ(10deg);
+            background: rgba(100, 200, 180, 0.2);
+            border-color: rgba(100, 200, 180, 0.5);
+            box-shadow: 0 8px 40px rgba(100, 200, 180, 0.4);
         }
 
         .action-btn:active {
-            transform: scale(0.95);
+            transform: translateZ(5px) scale(0.95);
         }
 
         .current-time-display {
             text-align: center;
-            margin-top: 60px;
-            animation: fadeIn 0.8s ease 0.2s both;
+            margin-top: 80px;
+            animation: fadeInScale 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+            transform-style: preserve-3d;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInScale {
+            from { 
+                opacity: 0; 
+                transform: scale(0.8) translateZ(-100px) rotateX(20deg);
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) translateZ(0) rotateX(0);
+            }
         }
 
         .main-time {
-            font-size: 72px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            font-size: 80px;
+            font-weight: 200;
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+            text-shadow: 
+                0 0 40px rgba(100, 200, 180, 0.5),
+                0 8px 30px rgba(0, 0, 0, 0.8);
             font-variant-numeric: tabular-nums;
+            background: linear-gradient(135deg, #fff 0%, #64c8b4 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(100, 200, 180, 0.5)); }
+            50% { filter: drop-shadow(0 0 30px rgba(100, 200, 180, 0.8)); }
         }
 
         .time-subtitle {
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             opacity: 0.9;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .main-content {
-            padding: 24px;
+            padding: 28px;
             position: relative;
             z-index: 5;
-            margin-top: -50px;
+            margin-top: -60px;
+            transform-style: preserve-3d;
         }
 
         .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            letter-spacing: -0.3px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #64c8b4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .install-banner,
+        .ios-version-warning,
+        .success-banner,
+        .location-info-banner {
+            backdrop-filter: blur(40px);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+            transition: all 0.4s ease;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) translateZ(-50px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) translateZ(0);
+            }
         }
 
         .install-banner {
-            background: linear-gradient(135deg, rgba(100, 200, 180, 0.15) 0%, rgba(80, 180, 160, 0.1) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(100, 200, 180, 0.3);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.2) 0%, rgba(80, 180, 160, 0.1) 100%);
+            border: 1px solid rgba(100, 200, 180, 0.4);
+        }
+
+        .install-banner:hover {
+            transform: translateZ(10px) scale(1.02);
+            box-shadow: 0 12px 48px rgba(100, 200, 180, 0.3);
         }
 
         .install-banner.hidden {
@@ -210,7 +327,13 @@
         }
 
         .install-icon {
-            font-size: 32px;
+            font-size: 36px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         .install-text {
@@ -218,36 +341,38 @@
         }
 
         .install-text h3 {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             margin-bottom: 4px;
         }
 
         .install-text p {
             font-size: 12px;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .install-btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             background: rgba(100, 200, 180, 0.3);
-            border: 1px solid rgba(100, 200, 180, 0.5);
-            border-radius: 8px;
+            border: 1px solid rgba(100, 200, 180, 0.6);
+            border-radius: 12px;
             color: #fff;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(100, 200, 180, 0.2);
+        }
+
+        .install-btn:hover {
+            transform: translateZ(10px) scale(1.05);
+            background: rgba(100, 200, 180, 0.5);
+            box-shadow: 0 8px 30px rgba(100, 200, 180, 0.4);
         }
 
         .ios-version-warning {
-            background: linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 140, 0, 0.1) 100%);
-            border: 1px solid rgba(255, 165, 0, 0.3);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            font-size: 12px;
-            line-height: 1.6;
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.2) 0%, rgba(255, 140, 0, 0.1) 100%);
+            border: 1px solid rgba(255, 165, 0, 0.4);
         }
 
         .ios-version-warning.hidden {
@@ -259,13 +384,8 @@
         }
 
         .success-banner {
-            background: linear-gradient(135deg, rgba(100, 200, 180, 0.2) 0%, rgba(80, 180, 160, 0.15) 100%);
-            border: 2px solid rgba(100, 200, 180, 0.4);
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            line-height: 1.5;
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.25) 0%, rgba(80, 180, 160, 0.15) 100%);
+            border: 2px solid rgba(100, 200, 180, 0.5);
         }
 
         .success-banner.hidden {
@@ -274,17 +394,31 @@
 
         .success-banner strong {
             color: #64c8b4;
-            font-size: 14px;
+            font-size: 15px;
+        }
+
+        .location-info-banner {
+            background: linear-gradient(135deg, rgba(100, 150, 250, 0.2) 0%, rgba(80, 130, 230, 0.1) 100%);
+            border: 1px solid rgba(100, 150, 250, 0.4);
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .location-info-banner strong {
+            color: #6496fa;
+            font-size: 15px;
         }
 
         .calculation-method {
-            background: rgba(100, 200, 180, 0.1);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.15) 0%, rgba(80, 180, 160, 0.1) 100%);
+            backdrop-filter: blur(30px);
             border: 1px solid rgba(100, 200, 180, 0.3);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            font-size: 12px;
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 13px;
             text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .calculation-method strong {
@@ -294,17 +428,42 @@
         .prayer-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 28px;
+            perspective: 1000px;
         }
 
         .prayer-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 16px;
-            transition: all 0.4s ease;
-            animation: fadeInUp 0.6s ease both;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: cardFloat 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .prayer-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(100, 200, 180, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .prayer-card:hover::before {
+            opacity: 1;
         }
 
         .prayer-card:nth-child(1) { animation-delay: 0.1s; }
@@ -313,49 +472,91 @@
         .prayer-card:nth-child(4) { animation-delay: 0.4s; }
         .prayer-card:nth-child(5) { animation-delay: 0.5s; }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes cardFloat {
+            from { 
+                opacity: 0; 
+                transform: translateY(40px) translateZ(-100px) rotateX(20deg);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) translateZ(0) rotateX(0);
+            }
+        }
+
+        .prayer-card:hover {
+            transform: translateZ(30px) scale(1.05) rotateX(5deg);
+            border-color: rgba(100, 200, 180, 0.5);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.15) 0%, rgba(80, 180, 160, 0.1) 100%);
+            box-shadow: 
+                0 20px 60px rgba(100, 200, 180, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .prayer-card.active {
-            background: linear-gradient(135deg, rgba(100, 200, 180, 0.2) 0%, rgba(80, 180, 160, 0.15) 100%);
-            border-color: rgba(100, 200, 180, 0.4);
-            box-shadow: 0 8px 24px rgba(100, 200, 180, 0.3);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.25) 0%, rgba(80, 180, 160, 0.15) 100%);
+            border-color: rgba(100, 200, 180, 0.6);
+            box-shadow: 
+                0 12px 48px rgba(100, 200, 180, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: activeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 12px 48px rgba(100, 200, 180, 0.4); }
+            50% { box-shadow: 0 16px 64px rgba(100, 200, 180, 0.6); }
         }
 
         .prayer-icon-wrapper {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 12px;
-            font-size: 18px;
+            margin-bottom: 14px;
+            font-size: 22px;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .prayer-card:hover .prayer-icon-wrapper {
+            transform: scale(1.2) rotateY(180deg);
+            background: rgba(100, 200, 180, 0.2);
         }
 
         .prayer-name {
-            font-size: 13px;
-            font-weight: 500;
-            opacity: 0.7;
-            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.8;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
         .prayer-time {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
             font-variant-numeric: tabular-nums;
+            background: linear-gradient(135deg, #fff 0%, #64c8b4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .prayer-countdown {
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 600;
             opacity: 0.9;
-            margin-top: 4px;
+            margin-top: 6px;
             color: #64c8b4;
+            animation: countPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes countPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
 
         .location-section {
@@ -364,66 +565,92 @@
 
         .location-dropdown {
             width: 100%;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            padding: 18px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
             color: #fff;
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364c8b4' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 16px center;
-            padding-right: 50px;
+            padding-right: 55px;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .location-dropdown:hover {
+            transform: translateZ(10px) scale(1.02);
+            border-color: rgba(100, 200, 180, 0.5);
+            box-shadow: 0 12px 48px rgba(100, 200, 180, 0.3);
         }
 
         .location-dropdown:focus {
             outline: none;
-            border-color: rgba(100, 200, 180, 0.5);
+            border-color: rgba(100, 200, 180, 0.6);
+            box-shadow: 0 0 0 4px rgba(100, 200, 180, 0.2);
         }
 
         .location-dropdown option {
             background: #1a3a3a;
             color: #fff;
+            padding: 12px;
         }
 
         .notification-section {
-            margin-bottom: 100px;
+            margin-bottom: 120px;
         }
 
         .notification-btn {
             width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, rgba(100, 200, 180, 0.2) 0%, rgba(80, 180, 160, 0.15) 100%);
-            border: 1px solid rgba(100, 200, 180, 0.3);
-            border-radius: 14px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.25) 0%, rgba(80, 180, 160, 0.15) 100%);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(100, 200, 180, 0.4);
+            border-radius: 16px;
             color: #fff;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 17px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
+            gap: 12px;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 
+                0 8px 32px rgba(100, 200, 180, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
+        }
+
+        .notification-btn:hover {
+            transform: translateZ(20px) scale(1.05);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.35) 0%, rgba(80, 180, 160, 0.25) 100%);
+            border-color: rgba(100, 200, 180, 0.6);
+            box-shadow: 
+                0 16px 64px rgba(100, 200, 180, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .notification-btn:active {
-            transform: scale(0.98);
+            transform: translateZ(10px) scale(0.98);
         }
 
         .notification-btn.enabled {
-            background: linear-gradient(135deg, rgba(100, 200, 180, 0.3) 0%, rgba(80, 180, 160, 0.25) 100%);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.4) 0%, rgba(80, 180, 160, 0.3) 100%);
+            border-color: rgba(100, 200, 180, 0.6);
         }
 
         .notification-info {
             text-align: center;
-            font-size: 12px;
-            margin-top: 12px;
-            opacity: 0.7;
-            line-height: 1.5;
+            font-size: 13px;
+            margin-top: 14px;
+            opacity: 0.8;
+            line-height: 1.6;
         }
 
         .bottom-nav {
@@ -433,90 +660,118 @@
             transform: translateX(-50%);
             max-width: 430px;
             width: 100%;
-            background: rgba(15, 35, 35, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 12px 24px 20px;
+            background: linear-gradient(180deg, transparent 0%, rgba(15, 35, 35, 0.98) 20%, rgba(10, 31, 31, 0.98) 100%);
+            backdrop-filter: blur(40px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 24px 24px;
             display: flex;
             justify-content: space-around;
             z-index: 100;
+            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            padding: 8px 16px;
-            border-radius: 12px;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 14px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-5px) scale(1.1);
+            background: rgba(100, 200, 180, 0.1);
         }
 
         .nav-item.active {
             color: #64c8b4;
+            background: rgba(100, 200, 180, 0.15);
         }
 
         .nav-icon {
-            font-size: 24px;
+            font-size: 26px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
 
         .nav-label {
             font-size: 11px;
-            font-weight: 500;
-            opacity: 0.7;
+            font-weight: 600;
+            opacity: 0.9;
+            letter-spacing: 0.5px;
         }
 
         .status-message {
             position: fixed;
-            top: 20px;
+            top: 24px;
             left: 50%;
-            transform: translateX(-50%);
-            background: rgba(100, 200, 180, 0.95);
-            backdrop-filter: blur(20px);
+            transform: translateX(-50%) translateZ(100px);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.98) 0%, rgba(80, 180, 160, 0.98) 100%);
+            backdrop-filter: blur(40px);
             color: #fff;
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 8px 24px rgba(100, 200, 180, 0.4);
-            z-index: 1000;
+            padding: 16px 28px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 
+                0 12px 48px rgba(100, 200, 180, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            z-index: 2000;
             max-width: 90%;
-            animation: slideDown 0.3s ease;
+            animation: statusSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translate(-50%, -30px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+        @keyframes statusSlide {
+            from { 
+                opacity: 0; 
+                transform: translate(-50%, -40px) translateZ(100px) rotateX(20deg);
+            }
+            to { 
+                opacity: 1; 
+                transform: translate(-50%, 0) translateZ(100px) rotateX(0);
+            }
         }
 
         .status-message.error {
-            background: rgba(244, 67, 54, 0.95);
-            box-shadow: 0 8px 24px rgba(244, 67, 54, 0.4);
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.98) 0%, rgba(220, 50, 40, 0.98) 100%);
+            box-shadow: 
+                0 12px 48px rgba(244, 67, 54, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .loading-spinner {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px;
+            padding: 50px;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
             border-top-color: #64c8b4;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
+            animation: spin3d 1s linear infinite;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(100, 200, 180, 0.3);
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin3d {
+            from { 
+                transform: rotate(0deg) rotateY(0deg);
+            }
+            to { 
+                transform: rotate(360deg) rotateY(360deg);
+            }
         }
 
         @media (max-width: 430px) {
-            .main-time { font-size: 64px; }
-            .header-section { height: 360px; }
+            .main-time { font-size: 68px; }
+            .header-section { height: 380px; }
         }
     </style>
 </head>
@@ -528,15 +783,44 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script>
-    // Регистрация Service Worker для push-уведомлений
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js')
             .then(registration => {
-                console.log('Service Worker зарегистрирован:', registration);
+                console.log('✅ Service Worker зарегистрирован');
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data && event.data.type === 'PLAY_ADHAN_SOUND') {
+                        playAdhanSound();
+                    }
+                });
             })
-            .catch(err => {
-                console.error('Ошибка Service Worker:', err);
+            .catch(err => console.error('❌ Ошибка Service Worker:', err));
+    }
+
+    function playAdhanSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const times = [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4];
+            const frequencies = [600, 800, 700, 900, 800, 1000, 900, 1100];
+
+            times.forEach((time, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.value = frequencies[index];
+                oscillator.type = 'sine';
+
+                gainNode.gain.setValueAtTime(0.4, audioContext.currentTime + time);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + time + 0.5);
+
+                oscillator.start(audioContext.currentTime + time);
+                oscillator.stop(audioContext.currentTime + time + 0.5);
             });
+        } catch (error) {
+            console.error('Ошибка звука:', error);
+        }
     }
     </script>
 
@@ -631,7 +915,9 @@
         };
 
         function App() {
-            const [location, setLocation] = useState('Назрань');
+            const [location, setLocation] = useState(() => {
+                return localStorage.getItem('selectedLocation') || 'Назрань';
+            });
             const [prayerTimes, setPrayerTimes] = useState(null);
             const [currentTime, setCurrentTime] = useState(new Date());
             const [loading, setLoading] = useState(true);
@@ -650,7 +936,6 @@
                 const iosDevice = /iPhone|iPad|iPod/.test(ua);
                 setIsIOS(iosDevice);
 
-                // Определяем версию iOS
                 if (iosDevice) {
                     const match = ua.match(/OS (\d+)_(\d+)/);
                     if (match) {
@@ -658,7 +943,6 @@
                         const minor = parseInt(match[2]);
                         setIosVersion({ major, minor });
 
-                        // Проверяем версию iOS 16.4+
                         if (major < 16 || (major === 16 && minor < 4)) {
                             setShowIOSWarning(true);
                         }
@@ -679,7 +963,6 @@
                     setShowInstallBanner(true);
                 });
 
-                // Проверяем разрешение на уведомления
                 if ('Notification' in window && Notification.permission === 'granted') {
                     setNotificationsEnabled(true);
                 }
@@ -724,13 +1007,19 @@
                     const data = await response.json();
 
                     if (data.code === 200) {
-                        setPrayerTimes(data.data.timings);
-                        localStorage.setItem('prayerTimes', JSON.stringify(data.data.timings));
-                        localStorage.setItem('location', location);
+                        const times = data.data.timings;
+                        setPrayerTimes(times);
+                        localStorage.setItem('prayerTimes', JSON.stringify(times));
+                        localStorage.setItem('selectedLocation', location);
 
-                        // Планируем уведомления
-                        if (notificationsEnabled) {
-                            schedulePrayerNotifications(data.data.timings);
+                        if (notificationsEnabled && 'serviceWorker' in navigator) {
+                            navigator.serviceWorker.ready.then(registration => {
+                                registration.active.postMessage({
+                                    type: 'UPDATE_PRAYER_TIMES',
+                                    location: location,
+                                    prayerTimes: times
+                                });
+                            });
                         }
                     }
                     setLoading(false);
@@ -773,40 +1062,10 @@
                 setNextPrayer('Fajr');
             }, [prayerTimes, currentTime]);
 
-            // Планирование уведомлений через Service Worker
-            const schedulePrayerNotifications = (times) => {
-                if (!('serviceWorker' in navigator) || !times) return;
-
-                navigator.serviceWorker.ready.then(registration => {
-                    const now = new Date();
-                    const today = now.toDateString();
-
-                    ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(prayer => {
-                        const timeStr = times[prayer];
-                        if (!timeStr) return;
-
-                        const [hours, minutes] = timeStr.split(':').map(Number);
-                        const prayerDate = new Date();
-                        prayerDate.setHours(hours, minutes, 0, 0);
-
-                        // Проверяем что время ещё не прошло
-                        if (prayerDate > now) {
-                            const delay = prayerDate.getTime() - now.getTime();
-
-                            // Сохраняем в localStorage для Service Worker
-                            const notifications = JSON.parse(localStorage.getItem('scheduledNotifications') || '[]');
-                            notifications.push({
-                                prayer,
-                                time: prayerDate.getTime(),
-                                location,
-                                title: `${PRAYER_NAMES[prayer].name} - ${location}`,
-                                body: `Наступило время намаза ${PRAYER_NAMES[prayer].name}`,
-                                icon: PRAYER_NAMES[prayer].icon
-                            });
-                            localStorage.setItem('scheduledNotifications', JSON.stringify(notifications));
-                        }
-                    });
-                });
+            const handleLocationChange = (newLocation) => {
+                setLocation(newLocation);
+                localStorage.setItem('selectedLocation', newLocation);
+                showStatus(`📍 Выбран: ${newLocation}`, false);
             };
 
             const enableNotifications = async () => {
@@ -822,7 +1081,6 @@
                         return;
                     }
 
-                    // Проверяем iOS версию
                     if (isIOS && iosVersion) {
                         if (iosVersion.major < 16 || (iosVersion.major === 16 && iosVersion.minor < 4)) {
                             showStatus('❌ Требуется iOS 16.4 или новее', true);
@@ -830,68 +1088,36 @@
                         }
                     }
 
-                    // Запрашиваем разрешение на уведомления
                     const permission = await Notification.requestPermission();
 
                     if (permission === 'granted') {
                         setNotificationsEnabled(true);
-                        showStatus('✅ Уведомления включены!', false);
+                        localStorage.setItem('notificationsEnabled', 'true');
+                        showStatus(`✅ Уведомления включены для: ${location}`, false);
 
-                        // Планируем уведомления
-                        if (prayerTimes) {
-                            schedulePrayerNotifications(prayerTimes);
+                        if (prayerTimes && 'serviceWorker' in navigator) {
+                            navigator.serviceWorker.ready.then(registration => {
+                                registration.active.postMessage({
+                                    type: 'UPDATE_PRAYER_TIMES',
+                                    location: location,
+                                    prayerTimes: prayerTimes
+                                });
+                            });
                         }
 
-                        // Тестовое уведомление
                         setTimeout(() => {
-                            playAdhanSound();
-                            new Notification('Уведомления настроены ✅', {
-                                body: 'Вы будете получать уведомления о времени намаза',
+                            window.playAdhanSound();
+                            new Notification(`🕌 Уведомления для ${location}`, {
+                                body: `Вы будете получать уведомления о времени намаза`,
                                 icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="192" height="192"%3E%3Crect width="192" height="192" fill="%231a3a3a"/%3E%3Ctext x="96" y="96" font-size="100" text-anchor="middle" dominant-baseline="central" fill="white"%3E🕌%3C/text%3E%3C/svg%3E',
-                                badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Crect width="96" height="96" fill="%231a3a3a"/%3E%3Ctext x="48" y="48" font-size="50" text-anchor="middle" dominant-baseline="central" fill="white"%3E🕌%3C/text%3E%3C/svg%3E',
-                                vibrate: [300, 100, 300, 100, 300],
-                                requireInteraction: false
+                                vibrate: [300, 100, 300]
                             });
                         }, 1000);
                     } else if (permission === 'denied') {
-                        showStatus('❌ Уведомления заблокированы. Разрешите в настройках', true);
-                    } else {
-                        showStatus('⚠️ Разрешение не дано', true);
+                        showStatus('❌ Уведомления заблокированы', true);
                     }
                 } catch (error) {
-                    console.error('Ошибка:', error);
                     showStatus('❌ Ошибка: ' + error.message, true);
-                }
-            };
-
-            const playAdhanSound = () => {
-                try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const times = [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4];
-                    const frequencies = [600, 800, 700, 900, 800, 1000, 900, 1100];
-
-                    times.forEach((time, index) => {
-                        const oscillator = audioContext.createOscillator();
-                        const gainNode = audioContext.createGain();
-
-                        oscillator.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
-
-                        oscillator.frequency.value = frequencies[index];
-                        oscillator.type = 'sine';
-
-                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime + time);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + time + 0.5);
-
-                        oscillator.start(audioContext.currentTime + time);
-                        oscillator.stop(audioContext.currentTime + time + 0.5);
-                    });
-
-                    if ('vibrate' in navigator) {
-                        navigator.vibrate([300, 100, 300, 100, 300, 100, 300, 100, 300]);
-                    }
-                } catch (error) {
-                    console.error('Ошибка звука:', error);
                 }
             };
 
@@ -973,24 +1199,32 @@
                         {showIOSWarning && (
                             <div className="ios-version-warning">
                                 <strong>⚠️ Обновите iOS!</strong><br/>
-                                Уведомления работают с <strong>iOS 16.4</strong> или новее.<br/>
-                                Обновите iPhone в: Настройки → Основные → Обновление ПО
+                                Push-уведомления работают с <strong>iOS 16.4</strong> или новее.
                             </div>
                         )}
 
                         {notificationsEnabled && isPWA && (
                             <div className="success-banner">
-                                <strong>✅ Уведомления включены!</strong><br/>
-                                Вы будете получать уведомления о времени намаза.<br/>
-                                🎵 <strong>Звук + вибрация + push-уведомление</strong>
+                                <strong>✅ Push-уведомления включены!</strong><br/>
+                                Уведомления для <strong>{location}</strong>
                             </div>
                         )}
+
+                        <div className="location-info-banner">
+                            <strong>📍 Выбранный населенный пункт</strong>
+                            <div style={{fontSize: '18px', fontWeight: 800, marginTop: '4px'}}>{location}</div>
+                            {notificationsEnabled && (
+                                <div style={{fontSize: '12px', marginTop: '4px', opacity: 0.9}}>
+                                    🔔 Уведомления настроены
+                                </div>
+                            )}
+                        </div>
 
                         <div className="location-section">
                             <select 
                                 className="location-dropdown"
                                 value={location}
-                                onChange={(e) => setLocation(e.target.value)}
+                                onChange={(e) => handleLocationChange(e.target.value)}
                             >
                                 {Object.keys(LOCATIONS).map(category => (
                                     <optgroup key={category} label={LOCATIONS[category].label}>
@@ -1003,10 +1237,10 @@
                         </div>
 
                         <div className="calculation-method">
-                            📐 Метод: <strong>UOIF</strong> (Северный Кавказ) • 🕌 <strong>51</strong> населенный пункт • 📱 <strong>iOS 16.4+</strong>
+                            📐 <strong>UOIF</strong> • 🕌 <strong>51</strong> населенный пункт • 📱 <strong>iOS 16.4+</strong>
                         </div>
 
-                        <h2 className="section-title">Расписание намазов</h2>
+                        <h2 className="section-title">Расписание намазов - {location}</h2>
 
                         {loading ? (
                             <div className="loading-spinner">
@@ -1039,16 +1273,18 @@
                                 onClick={enableNotifications}
                                 disabled={notificationsEnabled}
                             >
-                                <span>{notificationsEnabled ? '✅' : '🔔'}</span>
+                                <span style={{fontSize: '24px'}}>{notificationsEnabled ? '✅' : '🔔'}</span>
                                 <span>
-                                    {notificationsEnabled ? 'Push-уведомления включены' : 'Включить push-уведомления'}
+                                    {notificationsEnabled 
+                                        ? `Push для ${location} включены` 
+                                        : 'Включить push-уведомления'}
                                 </span>
                             </button>
                             <div className="notification-info">
                                 {notificationsEnabled ? (
-                                    <>🎵 Звук + вибрация + push-уведомление<br/>📳 Работают даже при закрытом приложении</>
+                                    <>🎵 Уведомления для <strong>{location}</strong><br/>📳 Приходят автоматически</>
                                 ) : (
-                                    <>Получайте push-уведомления о времени намаза<br/>📱 Требуется iOS 16.4+ и установленное приложение</>
+                                    <>Персональные уведомления<br/>📍 Для вашего города/села</>
                                 )}
                             </div>
                         </div>
