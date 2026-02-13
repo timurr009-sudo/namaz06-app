@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="Время намаза">
     <title>Время намаза - Ингушетия</title>
 
-    <link rel="manifest" id="manifest-placeholder">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%231a3a3a'/%3E%3Ctext x='90' y='90' font-size='90' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a3a3a'/%3E%3Ctext x='16' y='16' font-size='20' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E">
 
@@ -240,7 +240,7 @@
             transition: all 0.3s ease;
         }
 
-        .ios-warning {
+        .ios-version-warning {
             background: linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 140, 0, 0.1) 100%);
             border: 1px solid rgba(255, 165, 0, 0.3);
             border-radius: 12px;
@@ -250,12 +250,31 @@
             line-height: 1.6;
         }
 
-        .ios-warning.hidden {
+        .ios-version-warning.hidden {
             display: none;
         }
 
-        .ios-warning strong {
+        .ios-version-warning strong {
             color: #ffa500;
+        }
+
+        .success-banner {
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.2) 0%, rgba(80, 180, 160, 0.15) 100%);
+            border: 2px solid rgba(100, 200, 180, 0.4);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .success-banner.hidden {
+            display: none;
+        }
+
+        .success-banner strong {
+            color: #64c8b4;
+            font-size: 14px;
         }
 
         .calculation-method {
@@ -395,10 +414,6 @@
             transform: scale(0.98);
         }
 
-        .notification-btn:disabled {
-            opacity: 0.5;
-        }
-
         .notification-btn.enabled {
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.3) 0%, rgba(80, 180, 160, 0.25) 100%);
         }
@@ -513,44 +528,21 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script>
-    // Service Worker
+    // Регистрация Service Worker для push-уведомлений
     if ('serviceWorker' in navigator) {
-        const swCode = `
-            const CACHE_NAME = 'namaz-v1';
-            self.addEventListener('install', e => { self.skipWaiting(); });
-            self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
-            self.addEventListener('fetch', e => {
-                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+        navigator.serviceWorker.register('service-worker.js')
+            .then(registration => {
+                console.log('Service Worker зарегистрирован:', registration);
+            })
+            .catch(err => {
+                console.error('Ошибка Service Worker:', err);
             });
-        `;
-        const blob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl).catch(() => {});
     }
-
-    // Манифест
-    const manifest = {
-        name: "Время намаза - Ингушетия",
-        short_name: "Намаз",
-        start_url: "/",
-        display: "standalone",
-        background_color: "#0a1f1f",
-        theme_color: "#1a3a3a",
-        icons: [{
-            src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Crect width='512' height='512' fill='%231a3a3a'/%3E%3Ctext x='256' y='256' font-size='300' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E",
-            sizes: "512x512",
-            type: "image/svg+xml"
-        }]
-    };
-    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    const manifestURL = URL.createObjectURL(manifestBlob);
-    document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
     </script>
 
     <script type="text/babel">
         const { useState, useEffect, useCallback } = React;
 
-        // ВСЕ НАСЕЛЕННЫЕ ПУНКТЫ ИНГУШЕТИИ (51 населенный пункт)
         const LOCATIONS = {
             'cities': {
                 label: '🏙️ Города',
@@ -629,7 +621,7 @@
                 }
             }
         };
-        
+
         const PRAYER_NAMES = {
             'Fajr': { name: 'Фаджр', icon: '🌅' },
             'Dhuhr': { name: 'Зухр', icon: '☀️' },
@@ -648,14 +640,30 @@
             const [nextPrayer, setNextPrayer] = useState(null);
             const [showInstallBanner, setShowInstallBanner] = useState(false);
             const [showIOSWarning, setShowIOSWarning] = useState(false);
-            const [isPWA, setIsPWA] = useState(false);
-            const [isIOS, setIsIOS] = useState(false);
             const [deferredPrompt, setDeferredPrompt] = useState(null);
+            const [isIOS, setIsIOS] = useState(false);
+            const [isPWA, setIsPWA] = useState(false);
+            const [iosVersion, setIosVersion] = useState(null);
 
             useEffect(() => {
                 const ua = navigator.userAgent;
                 const iosDevice = /iPhone|iPad|iPod/.test(ua);
                 setIsIOS(iosDevice);
+
+                // Определяем версию iOS
+                if (iosDevice) {
+                    const match = ua.match(/OS (\d+)_(\d+)/);
+                    if (match) {
+                        const major = parseInt(match[1]);
+                        const minor = parseInt(match[2]);
+                        setIosVersion({ major, minor });
+
+                        // Проверяем версию iOS 16.4+
+                        if (major < 16 || (major === 16 && minor < 4)) {
+                            setShowIOSWarning(true);
+                        }
+                    }
+                }
 
                 const standalone = window.matchMedia('(display-mode: standalone)').matches ||
                                  window.navigator.standalone === true;
@@ -663,9 +671,6 @@
 
                 if (!standalone) {
                     setShowInstallBanner(true);
-                    if (iosDevice) {
-                        setShowIOSWarning(true);
-                    }
                 }
 
                 window.addEventListener('beforeinstallprompt', (e) => {
@@ -674,6 +679,7 @@
                     setShowInstallBanner(true);
                 });
 
+                // Проверяем разрешение на уведомления
                 if ('Notification' in window && Notification.permission === 'granted') {
                     setNotificationsEnabled(true);
                 }
@@ -721,6 +727,11 @@
                         setPrayerTimes(data.data.timings);
                         localStorage.setItem('prayerTimes', JSON.stringify(data.data.timings));
                         localStorage.setItem('location', location);
+
+                        // Планируем уведомления
+                        if (notificationsEnabled) {
+                            schedulePrayerNotifications(data.data.timings);
+                        }
                     }
                     setLoading(false);
                 } catch (error) {
@@ -728,7 +739,7 @@
                     if (cached) setPrayerTimes(JSON.parse(cached));
                     setLoading(false);
                 }
-            }, [location, getLocationCoords]);
+            }, [location, getLocationCoords, notificationsEnabled]);
 
             useEffect(() => {
                 fetchPrayerTimes();
@@ -762,36 +773,102 @@
                 setNextPrayer('Fajr');
             }, [prayerTimes, currentTime]);
 
-            useEffect(() => {
-                if (!prayerTimes || !notificationsEnabled) return;
+            // Планирование уведомлений через Service Worker
+            const schedulePrayerNotifications = (times) => {
+                if (!('serviceWorker' in navigator) || !times) return;
 
-                const now = new Date();
-                const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                navigator.serviceWorker.ready.then(registration => {
+                    const now = new Date();
+                    const today = now.toDateString();
 
-                for (let prayer of ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']) {
-                    const prayerTime = prayerTimes[prayer];
+                    ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(prayer => {
+                        const timeStr = times[prayer];
+                        if (!timeStr) return;
 
-                    if (prayerTime === currentTimeStr) {
-                        const lastNotification = localStorage.getItem('lastNotification');
-                        const notificationKey = `${prayer}-${currentTimeStr}`;
+                        const [hours, minutes] = timeStr.split(':').map(Number);
+                        const prayerDate = new Date();
+                        prayerDate.setHours(hours, minutes, 0, 0);
 
-                        if (lastNotification !== notificationKey) {
-                            playAdhanSound();
-                            showNotification(
-                                `${PRAYER_NAMES[prayer].name} - ${location}`,
-                                `Наступило время намаза ${PRAYER_NAMES[prayer].name}`
-                            );
-                            localStorage.setItem('lastNotification', notificationKey);
+                        // Проверяем что время ещё не прошло
+                        if (prayerDate > now) {
+                            const delay = prayerDate.getTime() - now.getTime();
+
+                            // Сохраняем в localStorage для Service Worker
+                            const notifications = JSON.parse(localStorage.getItem('scheduledNotifications') || '[]');
+                            notifications.push({
+                                prayer,
+                                time: prayerDate.getTime(),
+                                location,
+                                title: `${PRAYER_NAMES[prayer].name} - ${location}`,
+                                body: `Наступило время намаза ${PRAYER_NAMES[prayer].name}`,
+                                icon: PRAYER_NAMES[prayer].icon
+                            });
+                            localStorage.setItem('scheduledNotifications', JSON.stringify(notifications));
+                        }
+                    });
+                });
+            };
+
+            const enableNotifications = async () => {
+                try {
+                    if (!('Notification' in window)) {
+                        showStatus('❌ Уведомления не поддерживаются', true);
+                        return;
+                    }
+
+                    if (!isPWA) {
+                        showStatus('📱 Сначала установите приложение!', true);
+                        setShowInstallBanner(true);
+                        return;
+                    }
+
+                    // Проверяем iOS версию
+                    if (isIOS && iosVersion) {
+                        if (iosVersion.major < 16 || (iosVersion.major === 16 && iosVersion.minor < 4)) {
+                            showStatus('❌ Требуется iOS 16.4 или новее', true);
+                            return;
                         }
                     }
+
+                    // Запрашиваем разрешение на уведомления
+                    const permission = await Notification.requestPermission();
+
+                    if (permission === 'granted') {
+                        setNotificationsEnabled(true);
+                        showStatus('✅ Уведомления включены!', false);
+
+                        // Планируем уведомления
+                        if (prayerTimes) {
+                            schedulePrayerNotifications(prayerTimes);
+                        }
+
+                        // Тестовое уведомление
+                        setTimeout(() => {
+                            playAdhanSound();
+                            new Notification('Уведомления настроены ✅', {
+                                body: 'Вы будете получать уведомления о времени намаза',
+                                icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="192" height="192"%3E%3Crect width="192" height="192" fill="%231a3a3a"/%3E%3Ctext x="96" y="96" font-size="100" text-anchor="middle" dominant-baseline="central" fill="white"%3E🕌%3C/text%3E%3C/svg%3E',
+                                badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96"%3E%3Crect width="96" height="96" fill="%231a3a3a"/%3E%3Ctext x="48" y="48" font-size="50" text-anchor="middle" dominant-baseline="central" fill="white"%3E🕌%3C/text%3E%3C/svg%3E',
+                                vibrate: [300, 100, 300, 100, 300],
+                                requireInteraction: false
+                            });
+                        }, 1000);
+                    } else if (permission === 'denied') {
+                        showStatus('❌ Уведомления заблокированы. Разрешите в настройках', true);
+                    } else {
+                        showStatus('⚠️ Разрешение не дано', true);
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showStatus('❌ Ошибка: ' + error.message, true);
                 }
-            }, [currentTime, prayerTimes, notificationsEnabled, location]);
+            };
 
             const playAdhanSound = () => {
                 try {
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const times = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
-                    const frequencies = [600, 800, 700, 900, 800, 1000];
+                    const times = [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4];
+                    const frequencies = [600, 800, 700, 900, 800, 1000, 900, 1100];
 
                     times.forEach((time, index) => {
                         const oscillator = audioContext.createOscillator();
@@ -803,72 +880,18 @@
                         oscillator.frequency.value = frequencies[index];
                         oscillator.type = 'sine';
 
-                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + time);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + time + 0.4);
+                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime + time);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + time + 0.5);
 
                         oscillator.start(audioContext.currentTime + time);
-                        oscillator.stop(audioContext.currentTime + time + 0.4);
+                        oscillator.stop(audioContext.currentTime + time + 0.5);
                     });
 
                     if ('vibrate' in navigator) {
-                        navigator.vibrate([300, 100, 300, 100, 300, 100, 300]);
+                        navigator.vibrate([300, 100, 300, 100, 300, 100, 300, 100, 300]);
                     }
                 } catch (error) {
                     console.error('Ошибка звука:', error);
-                }
-            };
-
-            const showNotification = (title, body) => {
-                if ('Notification' in window && Notification.permission === 'granted') {
-                    try {
-                        new Notification(title, {
-                            body,
-                            icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="192" height="192"%3E%3Crect width="192" height="192" fill="%231a3a3a"/%3E%3Ctext x="96" y="96" font-size="100" text-anchor="middle" dominant-baseline="central" fill="white"%3E🕌%3C/text%3E%3C/svg%3E',
-                            vibrate: [300, 100, 300, 100, 300],
-                            requireInteraction: true,
-                            silent: false
-                        });
-                    } catch (error) {
-                        console.error('Ошибка уведомления:', error);
-                    }
-                }
-            };
-
-            const enableNotifications = async () => {
-                try {
-                    if (!('Notification' in window)) {
-                        showStatus('❌ Уведомления не поддерживаются', true);
-                        return;
-                    }
-
-                    if (isIOS && !isPWA) {
-                        showStatus('📱 Сначала установите приложение на главный экран!', true);
-                        setShowInstallBanner(true);
-                        setShowIOSWarning(true);
-                        return;
-                    }
-
-                    const permission = await Notification.requestPermission();
-
-                    if (permission === 'granted') {
-                        setNotificationsEnabled(true);
-                        showStatus('✅ Уведомления включены!', false);
-
-                        setTimeout(() => {
-                            playAdhanSound();
-                            showNotification(
-                                'Уведомления настроены ✅',
-                                'Вы будете получать звуковые уведомления о времени намаза'
-                            );
-                        }, 1000);
-                    } else if (permission === 'denied') {
-                        showStatus('❌ Уведомления заблокированы. Разрешите в настройках', true);
-                    } else {
-                        showStatus('⚠️ Разрешение не дано', true);
-                    }
-                } catch (error) {
-                    console.error('Ошибка:', error);
-                    showStatus('❌ Ошибка: ' + error.message, true);
                 }
             };
 
@@ -920,7 +943,9 @@
                                 </div>
                                 <div className="top-actions">
                                     <div className="action-btn" onClick={() => window.location.reload()}>🔄</div>
-                                    <div className="action-btn" onClick={enableNotifications}>🔔</div>
+                                    <div className="action-btn" onClick={enableNotifications}>
+                                        {notificationsEnabled ? '✅' : '🔔'}
+                                    </div>
                                 </div>
                             </div>
 
@@ -936,8 +961,8 @@
                             <div className="install-banner">
                                 <div className="install-icon">📱</div>
                                 <div className="install-text">
-                                    <h3>{isIOS ? 'Установите приложение' : 'Установите PWA'}</h3>
-                                    <p>{isIOS ? 'Для уведомлений нужно добавить на экран' : 'Работает без интернета'}</p>
+                                    <h3>Установите приложение</h3>
+                                    <p>Для работы уведомлений</p>
                                 </div>
                                 <button className="install-btn" onClick={installPWA}>
                                     {isIOS ? 'Как?' : 'Установить'}
@@ -945,10 +970,19 @@
                             </div>
                         )}
 
-                        {showIOSWarning && !isPWA && (
-                            <div className="ios-warning">
-                                <strong>iPhone:</strong> Уведомления работают только если приложение установлено!<br/>
-                                Нажмите <strong>Поделиться</strong> (📤) → <strong>На экран Домой</strong>
+                        {showIOSWarning && (
+                            <div className="ios-version-warning">
+                                <strong>⚠️ Обновите iOS!</strong><br/>
+                                Уведомления работают с <strong>iOS 16.4</strong> или новее.<br/>
+                                Обновите iPhone в: Настройки → Основные → Обновление ПО
+                            </div>
+                        )}
+
+                        {notificationsEnabled && isPWA && (
+                            <div className="success-banner">
+                                <strong>✅ Уведомления включены!</strong><br/>
+                                Вы будете получать уведомления о времени намаза.<br/>
+                                🎵 <strong>Звук + вибрация + push-уведомление</strong>
                             </div>
                         )}
 
@@ -969,7 +1003,7 @@
                         </div>
 
                         <div className="calculation-method">
-                            📐 Метод: <strong>UOIF</strong> (Северный Кавказ) • 🕌 <strong>51</strong> населенный пункт
+                            📐 Метод: <strong>UOIF</strong> (Северный Кавказ) • 🕌 <strong>51</strong> населенный пункт • 📱 <strong>iOS 16.4+</strong>
                         </div>
 
                         <h2 className="section-title">Расписание намазов</h2>
@@ -1007,17 +1041,14 @@
                             >
                                 <span>{notificationsEnabled ? '✅' : '🔔'}</span>
                                 <span>
-                                    {notificationsEnabled ? 'Уведомления включены' : 
-                                     (isIOS && !isPWA ? 'Сначала установите приложение' : 'Включить уведомления')}
+                                    {notificationsEnabled ? 'Push-уведомления включены' : 'Включить push-уведомления'}
                                 </span>
                             </button>
                             <div className="notification-info">
                                 {notificationsEnabled ? (
-                                    <>🎵 Звук и вибрация по времени намаза<br/>📳 Работает даже при закрытом приложении</>
-                                ) : isIOS && !isPWA ? (
-                                    <>На iPhone уведомления работают<br/>только для установленных приложений</>
+                                    <>🎵 Звук + вибрация + push-уведомление<br/>📳 Работают даже при закрытом приложении</>
                                 ) : (
-                                    <>Получайте звуковые уведомления<br/>по времени намаза</>
+                                    <>Получайте push-уведомления о времени намаза<br/>📱 Требуется iOS 16.4+ и установленное приложение</>
                                 )}
                             </div>
                         </div>
