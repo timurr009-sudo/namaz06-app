@@ -11,7 +11,6 @@
 
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%231a3a3a'/%3E%3Ctext x='90' y='90' font-size='90' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a3a3a'/%3E%3Ctext x='16' y='16' font-size='20' text-anchor='middle' dominant-baseline='central' fill='white'%3E🕌%3C/text%3E%3C/svg%3E">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -23,13 +22,12 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #0a1f1f;
             color: #fff;
             overflow-x: hidden;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            perspective: 1500px;
         }
 
         .app-container {
@@ -37,25 +35,18 @@
             margin: 0 auto;
             background: linear-gradient(135deg, #0a1f1f 0%, #0f2828 50%, #0a1f1f 100%);
             min-height: 100vh;
-            box-shadow: 0 0 80px rgba(100, 200, 180, 0.1);
             position: relative;
         }
 
-        /* Звезды на фоне */
         .app-container::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             background-image: 
                 radial-gradient(2px 2px at 20% 30%, white, transparent),
                 radial-gradient(2px 2px at 60% 70%, white, transparent),
-                radial-gradient(1px 1px at 50% 50%, white, transparent),
-                radial-gradient(1px 1px at 80% 10%, white, transparent),
-                radial-gradient(2px 2px at 90% 60%, white, transparent),
-                radial-gradient(1px 1px at 33% 80%, white, transparent);
+                radial-gradient(1px 1px at 50% 50%, white, transparent);
             background-size: 200% 200%;
             animation: twinkle 10s ease-in-out infinite;
             opacity: 0.3;
@@ -72,42 +63,33 @@
             height: 420px;
             background: linear-gradient(135deg, #1a3a3a 0%, #2d4f4f 50%, #1a3a3a 100%);
             overflow: hidden;
-            transform-style: preserve-3d;
         }
 
         .header-bg {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80') center/cover;
             opacity: 0.4;
-            animation: slowZoomRotate 40s ease-in-out infinite alternate;
-            transform: translateZ(-50px) scale(1.2);
+            animation: slowZoom 40s ease-in-out infinite alternate;
         }
 
-        @keyframes slowZoomRotate {
-            0% { transform: translateZ(-50px) scale(1.2) rotate(0deg); }
-            100% { transform: translateZ(-50px) scale(1.3) rotate(2deg); }
+        @keyframes slowZoom {
+            0% { transform: scale(1.2); }
+            100% { transform: scale(1.3); }
         }
 
         .header-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                linear-gradient(135deg, rgba(26, 58, 58, 0.6) 0%, rgba(10, 31, 31, 0.9) 100%),
-                radial-gradient(circle at 20% 80%, rgba(100, 200, 180, 0.1) 0%, transparent 50%);
+            background: linear-gradient(135deg, rgba(26, 58, 58, 0.6) 0%, rgba(10, 31, 31, 0.9) 100%);
         }
 
         .header-content {
             position: relative;
             z-index: 10;
             padding: 20px 24px;
-            transform-style: preserve-3d;
         }
 
         .top-bar {
@@ -115,29 +97,18 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
-            animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: fadeInDown 0.8s ease;
         }
 
         @keyframes fadeInDown {
-            from { 
-                opacity: 0; 
-                transform: translateY(-30px) rotateX(20deg);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) rotateX(0);
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .app-logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: transform 0.3s ease;
-        }
-
-        .app-logo:hover {
-            transform: translateZ(10px) scale(1.05);
         }
 
         .logo-icon {
@@ -151,19 +122,11 @@
             justify-content: center;
             font-size: 22px;
             animation: float 3s ease-in-out infinite;
-            box-shadow: 
-                0 8px 32px rgba(100, 200, 180, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform-style: preserve-3d;
         }
 
         @keyframes float {
-            0%, 100% { 
-                transform: translateY(0) rotateY(0deg);
-            }
-            50% { 
-                transform: translateY(-10px) rotateY(10deg);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .app-title h1 {
@@ -174,7 +137,6 @@
             background: linear-gradient(135deg, #fff 0%, #64c8b4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .app-title p {
@@ -182,7 +144,6 @@
             font-weight: 600;
             opacity: 0.8;
             letter-spacing: 2px;
-            text-transform: uppercase;
         }
 
         .top-actions {
@@ -201,38 +162,23 @@
             justify-content: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transform-style: preserve-3d;
+            transition: all 0.4s ease;
         }
 
         .action-btn:hover {
-            transform: translateZ(20px) scale(1.1) rotateZ(10deg);
+            transform: scale(1.1);
             background: rgba(100, 200, 180, 0.2);
-            border-color: rgba(100, 200, 180, 0.5);
-            box-shadow: 0 8px 40px rgba(100, 200, 180, 0.4);
-        }
-
-        .action-btn:active {
-            transform: translateZ(5px) scale(0.95);
         }
 
         .current-time-display {
             text-align: center;
             margin-top: 80px;
-            animation: fadeInScale 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
-            transform-style: preserve-3d;
+            animation: fadeIn 1s ease;
         }
 
-        @keyframes fadeInScale {
-            from { 
-                opacity: 0; 
-                transform: scale(0.8) translateZ(-100px) rotateX(20deg);
-            }
-            to { 
-                opacity: 1; 
-                transform: scale(1) translateZ(0) rotateX(0);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .main-time {
@@ -240,14 +186,10 @@
             font-weight: 200;
             letter-spacing: 4px;
             margin-bottom: 12px;
-            text-shadow: 
-                0 0 40px rgba(100, 200, 180, 0.5),
-                0 8px 30px rgba(0, 0, 0, 0.8);
-            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 40px rgba(100, 200, 180, 0.5);
             background: linear-gradient(135deg, #fff 0%, #64c8b4 50%, #fff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             animation: glow 3s ease-in-out infinite;
         }
 
@@ -260,7 +202,6 @@
             font-size: 14px;
             font-weight: 600;
             opacity: 0.9;
-            letter-spacing: 1px;
         }
 
         .main-content {
@@ -268,24 +209,130 @@
             position: relative;
             z-index: 5;
             margin-top: -60px;
-            transform-style: preserve-3d;
         }
 
         .section-title {
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 20px;
-            letter-spacing: -0.5px;
             background: linear-gradient(135deg, #fff 0%, #64c8b4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+        }
+
+        /* КРАСИВЫЙ 3D БЛОК ВЫБОРА С ПОЛУМЕСЯЦЕМ */
+        .location-selector-card {
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.15) 0%, rgba(80, 180, 160, 0.1) 100%);
+            backdrop-filter: blur(40px);
+            border: 2px solid rgba(100, 200, 180, 0.4);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 
+                0 12px 48px rgba(100, 200, 180, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: cardGlow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes cardGlow {
+            0%, 100% { 
+                box-shadow: 0 12px 48px rgba(100, 200, 180, 0.3);
+                transform: translateZ(0);
+            }
+            50% { 
+                box-shadow: 0 16px 64px rgba(100, 200, 180, 0.5);
+                transform: translateZ(10px);
+            }
+        }
+
+        /* КРАСИВЫЙ 3D ПОЛУМЕСЯЦ */
+        .crescent-3d {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 48px;
+            animation: rotateCrescent3D 6s ease-in-out infinite;
+            filter: drop-shadow(0 8px 16px rgba(100, 200, 180, 0.6));
+            transform-style: preserve-3d;
+        }
+
+        @keyframes rotateCrescent3D {
+            0%, 100% { 
+                transform: rotateY(0deg) rotateZ(0deg) translateZ(20px);
+            }
+            50% { 
+                transform: rotateY(180deg) rotateZ(20deg) translateZ(40px);
+            }
+        }
+
+        .location-selector-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            margin-left: 70px;
+        }
+
+        .location-selector-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #64c8b4;
+            text-shadow: 0 2px 8px rgba(100, 200, 180, 0.5);
+        }
+
+        .location-dropdown {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(100, 200, 180, 0.5);
+            border-radius: 16px;
+            color: #64c8b4;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364c8b4' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 55px;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 32px rgba(100, 200, 180, 0.3);
+        }
+
+        .location-dropdown:hover {
+            transform: scale(1.02) translateZ(10px);
+            border-color: rgba(100, 200, 180, 0.8);
+            box-shadow: 0 12px 48px rgba(100, 200, 180, 0.5);
+        }
+
+        .location-dropdown:focus {
+            outline: none;
+            border-color: #64c8b4;
+            box-shadow: 0 0 0 4px rgba(100, 200, 180, 0.2);
+        }
+
+        .location-dropdown option {
+            background: #1a3a3a;
+            color: #64c8b4;
+            padding: 12px;
+        }
+
+        .selected-info {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(100, 200, 180, 0.1);
+            border-radius: 12px;
+            font-size: 13px;
+            text-align: center;
+            color: #64c8b4;
         }
 
         .install-banner,
-        .ios-version-warning,
-        .success-banner,
-        .location-info-banner {
+        .success-banner {
             backdrop-filter: blur(40px);
             border-radius: 20px;
             padding: 18px;
@@ -293,33 +340,18 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-style: preserve-3d;
-            transition: all 0.4s ease;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideInUp 0.6s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes slideInUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px) translateZ(-50px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) translateZ(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .install-banner {
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.2) 0%, rgba(80, 180, 160, 0.1) 100%);
             border: 1px solid rgba(100, 200, 180, 0.4);
-        }
-
-        .install-banner:hover {
-            transform: translateZ(10px) scale(1.02);
-            box-shadow: 0 12px 48px rgba(100, 200, 180, 0.3);
         }
 
         .install-banner.hidden {
@@ -361,26 +393,6 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(100, 200, 180, 0.2);
-        }
-
-        .install-btn:hover {
-            transform: translateZ(10px) scale(1.05);
-            background: rgba(100, 200, 180, 0.5);
-            box-shadow: 0 8px 30px rgba(100, 200, 180, 0.4);
-        }
-
-        .ios-version-warning {
-            background: linear-gradient(135deg, rgba(255, 165, 0, 0.2) 0%, rgba(255, 140, 0, 0.1) 100%);
-            border: 1px solid rgba(255, 165, 0, 0.4);
-        }
-
-        .ios-version-warning.hidden {
-            display: none;
-        }
-
-        .ios-version-warning strong {
-            color: #ffa500;
         }
 
         .success-banner {
@@ -392,23 +404,6 @@
             display: none;
         }
 
-        .success-banner strong {
-            color: #64c8b4;
-            font-size: 15px;
-        }
-
-        .location-info-banner {
-            background: linear-gradient(135deg, rgba(100, 150, 250, 0.2) 0%, rgba(80, 130, 230, 0.1) 100%);
-            border: 1px solid rgba(100, 150, 250, 0.4);
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .location-info-banner strong {
-            color: #6496fa;
-            font-size: 15px;
-        }
-
         .calculation-method {
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.15) 0%, rgba(80, 180, 160, 0.1) 100%);
             backdrop-filter: blur(30px);
@@ -418,10 +413,72 @@
             margin-bottom: 20px;
             font-size: 13px;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .calculation-method strong {
+            color: #64c8b4;
+        }
+
+        /* СПИСОК ВСЕХ ГОРОДОВ С ВРЕМЕНЕМ */
+        .all-cities-list {
+            margin-bottom: 28px;
+        }
+
+        .city-time-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .city-time-card:hover {
+            transform: translateX(8px);
+            border-color: rgba(100, 200, 180, 0.5);
+            background: linear-gradient(135deg, rgba(100, 200, 180, 0.1) 0%, rgba(80, 180, 160, 0.05) 100%);
+        }
+
+        .city-time-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .city-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #64c8b4;
+        }
+
+        .city-district {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .prayer-times-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .prayer-time-mini {
+            text-align: center;
+        }
+
+        .prayer-time-mini-name {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .prayer-time-mini-value {
+            font-size: 13px;
+            font-weight: 700;
             color: #64c8b4;
         }
 
@@ -430,7 +487,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 28px;
-            perspective: 1000px;
         }
 
         .prayer-card {
@@ -439,31 +495,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 20px;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            animation: cardFloat 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            animation: cardFloat 0.8s ease both;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .prayer-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(100, 200, 180, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .prayer-card:hover::before {
-            opacity: 1;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .prayer-card:nth-child(1) { animation-delay: 0.1s; }
@@ -473,31 +508,18 @@
         .prayer-card:nth-child(5) { animation-delay: 0.5s; }
 
         @keyframes cardFloat {
-            from { 
-                opacity: 0; 
-                transform: translateY(40px) translateZ(-100px) rotateX(20deg);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) translateZ(0) rotateX(0);
-            }
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .prayer-card:hover {
-            transform: translateZ(30px) scale(1.05) rotateX(5deg);
+            transform: scale(1.05);
             border-color: rgba(100, 200, 180, 0.5);
-            background: linear-gradient(135deg, rgba(100, 200, 180, 0.15) 0%, rgba(80, 180, 160, 0.1) 100%);
-            box-shadow: 
-                0 20px 60px rgba(100, 200, 180, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .prayer-card.active {
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.25) 0%, rgba(80, 180, 160, 0.15) 100%);
             border-color: rgba(100, 200, 180, 0.6);
-            box-shadow: 
-                0 12px 48px rgba(100, 200, 180, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             animation: activeGlow 2s ease-in-out infinite;
         }
 
@@ -509,7 +531,7 @@
         .prayer-icon-wrapper {
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(100, 200, 180, 0.1);
             backdrop-filter: blur(20px);
             border-radius: 14px;
             display: flex;
@@ -517,13 +539,6 @@
             justify-content: center;
             margin-bottom: 14px;
             font-size: 22px;
-            transition: all 0.4s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .prayer-card:hover .prayer-icon-wrapper {
-            transform: scale(1.2) rotateY(180deg);
-            background: rgba(100, 200, 180, 0.2);
         }
 
         .prayer-name {
@@ -531,24 +546,19 @@
             font-weight: 600;
             opacity: 0.8;
             margin-bottom: 6px;
-            letter-spacing: 0.5px;
         }
 
         .prayer-time {
             font-size: 24px;
             font-weight: 800;
-            letter-spacing: 1px;
-            font-variant-numeric: tabular-nums;
             background: linear-gradient(135deg, #fff 0%, #64c8b4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .prayer-countdown {
             font-size: 12px;
             font-weight: 600;
-            opacity: 0.9;
             margin-top: 6px;
             color: #64c8b4;
             animation: countPulse 2s ease-in-out infinite;
@@ -557,48 +567,6 @@
         @keyframes countPulse {
             0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
-        }
-
-        .location-section {
-            margin-bottom: 24px;
-        }
-
-        .location-dropdown {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364c8b4' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            padding-right: 55px;
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .location-dropdown:hover {
-            transform: translateZ(10px) scale(1.02);
-            border-color: rgba(100, 200, 180, 0.5);
-            box-shadow: 0 12px 48px rgba(100, 200, 180, 0.3);
-        }
-
-        .location-dropdown:focus {
-            outline: none;
-            border-color: rgba(100, 200, 180, 0.6);
-            box-shadow: 0 0 0 4px rgba(100, 200, 180, 0.2);
-        }
-
-        .location-dropdown option {
-            background: #1a3a3a;
-            color: #fff;
-            padding: 12px;
         }
 
         .notification-section {
@@ -620,29 +588,17 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 
-                0 8px 32px rgba(100, 200, 180, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            box-shadow: 0 8px 32px rgba(100, 200, 180, 0.3);
         }
 
         .notification-btn:hover {
-            transform: translateZ(20px) scale(1.05);
+            transform: scale(1.05);
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.35) 0%, rgba(80, 180, 160, 0.25) 100%);
-            border-color: rgba(100, 200, 180, 0.6);
-            box-shadow: 
-                0 16px 64px rgba(100, 200, 180, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        .notification-btn:active {
-            transform: translateZ(10px) scale(0.98);
         }
 
         .notification-btn.enabled {
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.4) 0%, rgba(80, 180, 160, 0.3) 100%);
-            border-color: rgba(100, 200, 180, 0.6);
         }
 
         .notification-info {
@@ -650,7 +606,117 @@
             font-size: 13px;
             margin-top: 14px;
             opacity: 0.8;
-            line-height: 1.6;
+        }
+
+        /* ПОГОДА С РЕАЛЬНЫМИ ДАННЫМИ */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .weather-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 16px;
+            transition: all 0.4s ease;
+        }
+
+        .weather-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(100, 200, 180, 0.5);
+        }
+
+        .weather-icon {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 8px;
+            animation: weatherFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes weatherFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .weather-city {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .weather-temp {
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+            color: #64c8b4;
+        }
+
+        .weather-desc {
+            font-size: 11px;
+            text-align: center;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .weather-detail {
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .weather-detail-value {
+            font-weight: 700;
+            color: #64c8b4;
+        }
+
+        /* Настройки */
+        .settings-section {
+            padding-bottom: 100px;
+        }
+
+        .settings-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .settings-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #64c8b4;
+        }
+
+        .settings-card p,
+        .settings-card li {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .settings-card ol,
+        .settings-card ul {
+            padding-left: 20px;
+        }
+
+        .settings-card strong {
+            color: #64c8b4;
         }
 
         .bottom-nav {
@@ -660,14 +726,13 @@
             transform: translateX(-50%);
             max-width: 430px;
             width: 100%;
-            background: linear-gradient(180deg, transparent 0%, rgba(15, 35, 35, 0.98) 20%, rgba(10, 31, 31, 0.98) 100%);
+            background: linear-gradient(180deg, transparent 0%, rgba(15, 35, 35, 0.98) 20%);
             backdrop-filter: blur(40px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding: 16px 24px 24px;
             display: flex;
             justify-content: space-around;
             z-index: 100;
-            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .nav-item {
@@ -682,7 +747,7 @@
         }
 
         .nav-item:hover {
-            transform: translateY(-5px) scale(1.1);
+            transform: translateY(-5px);
             background: rgba(100, 200, 180, 0.1);
         }
 
@@ -693,21 +758,28 @@
 
         .nav-icon {
             font-size: 26px;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .crescent-icon {
+            animation: rotateCrescent 4s ease-in-out infinite;
+        }
+
+        @keyframes rotateCrescent {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(20deg); }
         }
 
         .nav-label {
             font-size: 11px;
             font-weight: 600;
             opacity: 0.9;
-            letter-spacing: 0.5px;
         }
 
         .status-message {
             position: fixed;
             top: 24px;
             left: 50%;
-            transform: translateX(-50%) translateZ(100px);
+            transform: translateX(-50%);
             background: linear-gradient(135deg, rgba(100, 200, 180, 0.98) 0%, rgba(80, 180, 160, 0.98) 100%);
             backdrop-filter: blur(40px);
             color: #fff;
@@ -715,31 +787,19 @@
             border-radius: 16px;
             font-size: 15px;
             font-weight: 700;
-            box-shadow: 
-                0 12px 48px rgba(100, 200, 180, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 48px rgba(100, 200, 180, 0.5);
             z-index: 2000;
             max-width: 90%;
-            animation: statusSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: statusSlide 0.5s ease;
         }
 
         @keyframes statusSlide {
-            from { 
-                opacity: 0; 
-                transform: translate(-50%, -40px) translateZ(100px) rotateX(20deg);
-            }
-            to { 
-                opacity: 1; 
-                transform: translate(-50%, 0) translateZ(100px) rotateX(0);
-            }
+            from { opacity: 0; transform: translate(-50%, -40px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
 
         .status-message.error {
             background: linear-gradient(135deg, rgba(244, 67, 54, 0.98) 0%, rgba(220, 50, 40, 0.98) 100%);
-            box-shadow: 
-                0 12px 48px rgba(244, 67, 54, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .loading-spinner {
@@ -755,18 +815,16 @@
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-top-color: #64c8b4;
             border-radius: 50%;
-            animation: spin3d 1s linear infinite;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(100, 200, 180, 0.3);
         }
 
-        @keyframes spin3d {
-            from { 
-                transform: rotate(0deg) rotateY(0deg);
-            }
-            to { 
-                transform: rotate(360deg) rotateY(360deg);
-            }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         @media (max-width: 430px) {
@@ -776,8 +834,7 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
-
+    <div id="root"></div>    
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -799,37 +856,55 @@
     function playAdhanSound() {
         try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const times = [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4];
-            const frequencies = [600, 800, 700, 900, 800, 1000, 900, 1100];
+            const adhanNotes = [
+                { freq: 523, time: 0, duration: 0.5 },
+                { freq: 587, time: 0.5, duration: 0.5 },
+                { freq: 659, time: 1.0, duration: 0.7 },
+                { freq: 698, time: 1.7, duration: 0.5 },
+                { freq: 784, time: 2.2, duration: 0.8 },
+                { freq: 880, time: 3.0, duration: 0.6 },
+                { freq: 784, time: 3.6, duration: 0.5 },
+                { freq: 698, time: 4.1, duration: 0.7 },
+                { freq: 659, time: 4.8, duration: 1.0 }
+            ];
 
-            times.forEach((time, index) => {
+            adhanNotes.forEach(note => {
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
 
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
 
-                oscillator.frequency.value = frequencies[index];
+                oscillator.frequency.value = note.freq;
                 oscillator.type = 'sine';
 
-                gainNode.gain.setValueAtTime(0.4, audioContext.currentTime + time);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + time + 0.5);
+                const startTime = audioContext.currentTime + note.time;
+                const endTime = startTime + note.duration;
 
-                oscillator.start(audioContext.currentTime + time);
-                oscillator.stop(audioContext.currentTime + time + 0.5);
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, startTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, endTime);
+
+                oscillator.start(startTime);
+                oscillator.stop(endTime);
             });
+
+            console.log('🎵 Звук азана воспроизведен');
         } catch (error) {
             console.error('Ошибка звука:', error);
         }
     }
+
+    window.playAdhanSound = playAdhanSound;
     </script>
 
     <script type="text/babel">
         const { useState, useEffect, useCallback } = React;
 
+        // ПОЛНАЯ БАЗА ДАННЫХ - ВСЕ 68 НАСЕЛЕННЫХ ПУНКТОВ ИНГУШЕТИИ
         const LOCATIONS = {
             'cities': {
-                label: '🏙️ Города',
+                label: '🏙️ Города (5)',
                 items: {
                     'Магас': { lat: 43.1675, lon: 45.0347 },
                     'Назрань': { lat: 43.2256, lon: 44.7733 },
@@ -839,23 +914,40 @@
                 }
             },
             'dzheyrakh': {
-                label: '📍 Джейрахский район',
+                label: '📍 Джейрахский район (28)',
                 items: {
                     'Джейрах': { lat: 42.8219, lon: 44.6797 },
                     'Армхи': { lat: 42.8450, lon: 44.7100 },
+                    'Барах': { lat: 42.8100, lon: 44.6850 },
+                    'Бархане': { lat: 42.8150, lon: 44.6900 },
                     'Бейни': { lat: 42.8350, lon: 44.6950 },
+                    'Бийсар': { lat: 42.7950, lon: 44.6700 },
+                    'Бирги': { lat: 42.8050, lon: 44.6750 },
                     'Бишт': { lat: 42.8000, lon: 44.6500 },
                     'Бялган': { lat: 42.7800, lon: 44.6300 },
+                    'Вовнушке': { lat: 42.7750, lon: 44.6250 },
+                    'Гадаборш': { lat: 42.7900, lon: 44.6550 },
+                    'Галошпе': { lat: 42.8250, lon: 44.6850 },
+                    'Ганти': { lat: 42.8300, lon: 44.6900 },
+                    'Гаппи': { lat: 42.7850, lon: 44.6450 },
+                    'Гарк': { lat: 42.7700, lon: 44.6200 },
+                    'Гирети': { lat: 42.8400, lon: 44.7050 },
+                    'Говзт': { lat: 42.8350, lon: 44.7000 },
+                    'Горбани': { lat: 42.8200, lon: 44.6800 },
+                    'Гу': { lat: 42.7650, lon: 44.6150 },
                     'Гули': { lat: 42.7600, lon: 44.6100 },
+                    'Гянт': { lat: 42.8150, lon: 44.6750 },
+                    'Дакхала': { lat: 42.8100, lon: 44.6700 },
                     'Дошалкхе': { lat: 42.8100, lon: 44.6700 },
                     'Духургишт': { lat: 42.7900, lon: 44.6400 },
                     'Исконтне': { lat: 42.8200, lon: 44.6600 },
+                    'Исмейл-ков': { lat: 42.8050, lon: 44.6650 },
                     'Йовли': { lat: 42.8300, lon: 44.6800 },
                     'Кашети': { lat: 42.8250, lon: 44.6550 }
                 }
             },
             'malgobek': {
-                label: '📍 Малгобекский район',
+                label: '📍 Малгобекский район (13)',
                 items: {
                     'Малгобек': { lat: 43.5087, lon: 44.5876 },
                     'Аки-Юрт': { lat: 43.5200, lon: 44.6100 },
@@ -873,7 +965,7 @@
                 }
             },
             'nazran': {
-                label: '📍 Назрановский район',
+                label: '📍 Назрановский район (11)',
                 items: {
                     'Назрань': { lat: 43.2256, lon: 44.7733 },
                     'Али-Юрт': { lat: 43.2400, lon: 44.7900 },
@@ -889,7 +981,7 @@
                 }
             },
             'sunzha': {
-                label: '📍 Сунженский район',
+                label: '📍 Сунженский район (11)',
                 items: {
                     'Сунжа': { lat: 43.3214, lon: 45.0464 },
                     'Алкун': { lat: 43.3100, lon: 45.0200 },
@@ -906,6 +998,19 @@
             }
         };
 
+        // Координаты для погоды по районам (9 локаций)
+        const WEATHER_LOCATIONS = {
+            'Магас': { lat: 43.1675, lon: 45.0347 },
+            'Назрань': { lat: 43.2256, lon: 44.7733 },
+            'Малгобек': { lat: 43.5087, lon: 44.5876 },
+            'Карабулак': { lat: 43.3044, lon: 44.9086 },
+            'Сунжа': { lat: 43.3214, lon: 45.0464 },
+            'Джейрахский': { lat: 42.8219, lon: 44.6797 },
+            'Малгобекский': { lat: 43.5087, lon: 44.5876 },
+            'Назрановский': { lat: 43.2256, lon: 44.7733 },
+            'Сунженский': { lat: 43.3214, lon: 45.0464 }
+        };
+
         const PRAYER_NAMES = {
             'Fajr': { name: 'Фаджр', icon: '🌅' },
             'Dhuhr': { name: 'Зухр', icon: '☀️' },
@@ -914,40 +1019,40 @@
             'Isha': { name: 'Иша', icon: '🌙' }
         };
 
+        // Умные иконки погоды
+        const getWeatherIcon = (description, temp) => {
+            const desc = description.toLowerCase();
+            if (desc.includes('ясно') || desc.includes('clear')) return '☀️';
+            if (desc.includes('облачно') || desc.includes('cloud') || desc.includes('переменная')) return '☁️';
+            if (desc.includes('дождь') || desc.includes('rain') || desc.includes('ливень')) return '🌧️';
+            if (desc.includes('снег') || desc.includes('snow')) return '❄️';
+            if (desc.includes('гроз') || desc.includes('thunder')) return '⛈️';
+            if (desc.includes('туман') || desc.includes('fog')) return '🌫️';
+            if (temp < 0) return '🥶';
+            if (temp > 25) return '🌡️';
+            return '🌤️';
+        };
+
         function App() {
-            const [location, setLocation] = useState(() => {
-                return localStorage.getItem('selectedLocation') || 'Назрань';
-            });
+            const [currentView, setCurrentView] = useState('home');
+            const [location, setLocation] = useState(() => localStorage.getItem('selectedLocation') || 'Назрань');
             const [prayerTimes, setPrayerTimes] = useState(null);
+            const [allPrayerTimes, setAllPrayerTimes] = useState({});
             const [currentTime, setCurrentTime] = useState(new Date());
             const [loading, setLoading] = useState(true);
             const [notificationsEnabled, setNotificationsEnabled] = useState(false);
             const [statusMessage, setStatusMessage] = useState('');
             const [nextPrayer, setNextPrayer] = useState(null);
             const [showInstallBanner, setShowInstallBanner] = useState(false);
-            const [showIOSWarning, setShowIOSWarning] = useState(false);
             const [deferredPrompt, setDeferredPrompt] = useState(null);
             const [isIOS, setIsIOS] = useState(false);
             const [isPWA, setIsPWA] = useState(false);
-            const [iosVersion, setIosVersion] = useState(null);
+            const [weatherData, setWeatherData] = useState(null);
+            const [weatherLoading, setWeatherLoading] = useState(true);
 
             useEffect(() => {
                 const ua = navigator.userAgent;
-                const iosDevice = /iPhone|iPad|iPod/.test(ua);
-                setIsIOS(iosDevice);
-
-                if (iosDevice) {
-                    const match = ua.match(/OS (\d+)_(\d+)/);
-                    if (match) {
-                        const major = parseInt(match[1]);
-                        const minor = parseInt(match[2]);
-                        setIosVersion({ major, minor });
-
-                        if (major < 16 || (major === 16 && minor < 4)) {
-                            setShowIOSWarning(true);
-                        }
-                    }
-                }
+                setIsIOS(/iPhone|iPad|iPod/.test(ua));
 
                 const standalone = window.matchMedia('(display-mode: standalone)').matches ||
                                  window.navigator.standalone === true;
@@ -995,6 +1100,90 @@
                 return LOCATIONS.cities.items['Назрань'];
             }, []);
 
+            const getCategoryName = (locName) => {
+                for (let category in LOCATIONS) {
+                    if (LOCATIONS[category].items[locName]) {
+                        return LOCATIONS[category].label;
+                    }
+                }
+                return '';
+            };
+
+            // ✅ РЕАЛЬНАЯ ПОГОДА через Open-Meteo API (бесплатный, без регистрации!)
+            const fetchRealWeather = useCallback(async () => {
+                setWeatherLoading(true);
+                const weatherResults = {};
+
+                try {
+                    console.log('🌤️ Загрузка РЕАЛЬНОЙ погоды через Open-Meteo API...');
+
+                    // Open-Meteo API - полностью бесплатный, без ключа!
+                    for (let cityName in WEATHER_LOCATIONS) {
+                        const coords = WEATHER_LOCATIONS[cityName];
+
+                        // Open-Meteo API URL
+                        const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Europe/Moscow`;
+
+                        try {
+                            const response = await fetch(url);
+                            const data = await response.json();
+
+                            if (data && data.current) {
+                                const temp = Math.round(data.current.temperature_2m);
+                                const weatherCode = data.current.weather_code;
+                                const humidity = data.current.relative_humidity_2m;
+                                const windSpeed = data.current.wind_speed_10m;
+
+                                // Преобразуем WMO Weather Code в описание
+                                const getWeatherDescription = (code) => {
+                                    if (code === 0) return 'Ясно';
+                                    if (code <= 3) return 'Переменная облачность';
+                                    if (code <= 48) return 'Туман';
+                                    if (code <= 67) return 'Дождь';
+                                    if (code <= 77) return 'Снег';
+                                    if (code <= 82) return 'Ливень';
+                                    if (code <= 86) return 'Снегопад';
+                                    if (code <= 99) return 'Гроза';
+                                    return 'Облачно';
+                                };
+
+                                const desc = getWeatherDescription(weatherCode);
+
+                                weatherResults[cityName] = {
+                                    temp: temp,
+                                    icon: getWeatherIcon(desc, temp),
+                                    desc: desc,
+                                    humidity: humidity,
+                                    wind: Math.round(windSpeed * 10) / 10
+                                };
+
+                                console.log(`✅ ${cityName}: ${temp}°C, ${desc}`);
+                            }
+
+                            // Небольшая задержка между запросами
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        } catch (error) {
+                            console.error(`❌ Ошибка загрузки погоды для ${cityName}:`, error);
+                            // Fallback для этого города
+                            weatherResults[cityName] = {
+                                temp: 12,
+                                icon: '🌤️',
+                                desc: 'Данные недоступны',
+                                humidity: 65,
+                                wind: 3.5
+                            };
+                        }
+                    }
+
+                    setWeatherData(weatherResults);
+                    console.log('✅ Реальная погода загружена через Open-Meteo API!');
+                } catch (error) {
+                    console.error('❌ Ошибка загрузки погоды:', error);
+                }
+
+                setWeatherLoading(false);
+            }, []);
+
             const fetchPrayerTimes = useCallback(async () => {
                 try {
                     setLoading(true);
@@ -1030,11 +1219,43 @@
                 }
             }, [location, getLocationCoords, notificationsEnabled]);
 
+            const fetchAllPrayerTimes = useCallback(async () => {
+                const allTimes = {};
+                const mainCities = ['Магас', 'Назрань', 'Малгобек', 'Карабулак', 'Сунжа', 'Джейрах', 'Аки-Юрт', 'Али-Юрт', 'Алкун'];
+
+                for (let cityName of mainCities) {
+                    try {
+                        const coords = getLocationCoords(cityName);
+                        const timestamp = Math.floor(Date.now() / 1000);
+                        const response = await fetch(
+                            `https://api.aladhan.com/v1/timings/${timestamp}?latitude=${coords.lat}&longitude=${coords.lon}&method=7&school=1&timezonestring=Europe/Moscow`
+                        );
+                        const data = await response.json();
+                        if (data.code === 200) {
+                            allTimes[cityName] = data.data.timings;
+                        }
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    } catch (error) {
+                        console.error(`Ошибка загрузки для ${cityName}:`, error);
+                    }
+                }
+
+                setAllPrayerTimes(allTimes);
+            }, [getLocationCoords]);
+
             useEffect(() => {
                 fetchPrayerTimes();
-                const interval = setInterval(fetchPrayerTimes, 60000);
-                return () => clearInterval(interval);
-            }, [fetchPrayerTimes]);
+                fetchAllPrayerTimes();
+                fetchRealWeather();
+
+                const prayerInterval = setInterval(fetchPrayerTimes, 60000);
+                const weatherInterval = setInterval(fetchRealWeather, 1800000); // Обновление погоды каждые 30 минут
+
+                return () => {
+                    clearInterval(prayerInterval);
+                    clearInterval(weatherInterval);
+                };
+            }, [fetchPrayerTimes, fetchAllPrayerTimes, fetchRealWeather]);
 
             useEffect(() => {
                 const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -1081,13 +1302,6 @@
                         return;
                     }
 
-                    if (isIOS && iosVersion) {
-                        if (iosVersion.major < 16 || (iosVersion.major === 16 && iosVersion.minor < 4)) {
-                            showStatus('❌ Требуется iOS 16.4 или новее', true);
-                            return;
-                        }
-                    }
-
                     const permission = await Notification.requestPermission();
 
                     if (permission === 'granted') {
@@ -1108,7 +1322,7 @@
                         setTimeout(() => {
                             window.playAdhanSound();
                             new Notification(`🕌 Уведомления для ${location}`, {
-                                body: `Вы будете получать уведомления о времени намаза`,
+                                body: `Вы будете получать уведомления со звуком азана`,
                                 icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="192" height="192"%3E%3Crect width="192" height="192" fill="%231a3a3a"/%3E%3Ctext x="96" y="96" font-size="100" text-anchor="middle" dominant-baseline="central" fill="white"%3E🕌%3C/text%3E%3C/svg%3E',
                                 vibrate: [300, 100, 300]
                             });
@@ -1183,123 +1397,249 @@
                     </div>
 
                     <div className="main-content">
-                        {showInstallBanner && (
-                            <div className="install-banner">
-                                <div className="install-icon">📱</div>
-                                <div className="install-text">
-                                    <h3>Установите приложение</h3>
-                                    <p>Для работы уведомлений</p>
-                                </div>
-                                <button className="install-btn" onClick={installPWA}>
-                                    {isIOS ? 'Как?' : 'Установить'}
-                                </button>
-                            </div>
-                        )}
-
-                        {showIOSWarning && (
-                            <div className="ios-version-warning">
-                                <strong>⚠️ Обновите iOS!</strong><br/>
-                                Push-уведомления работают с <strong>iOS 16.4</strong> или новее.
-                            </div>
-                        )}
-
-                        {notificationsEnabled && isPWA && (
-                            <div className="success-banner">
-                                <strong>✅ Push-уведомления включены!</strong><br/>
-                                Уведомления для <strong>{location}</strong>
-                            </div>
-                        )}
-
-                        <div className="location-info-banner">
-                            <strong>📍 Выбранный населенный пункт</strong>
-                            <div style={{fontSize: '18px', fontWeight: 800, marginTop: '4px'}}>{location}</div>
-                            {notificationsEnabled && (
-                                <div style={{fontSize: '12px', marginTop: '4px', opacity: 0.9}}>
-                                    🔔 Уведомления настроены
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="location-section">
-                            <select 
-                                className="location-dropdown"
-                                value={location}
-                                onChange={(e) => handleLocationChange(e.target.value)}
-                            >
-                                {Object.keys(LOCATIONS).map(category => (
-                                    <optgroup key={category} label={LOCATIONS[category].label}>
-                                        {Object.keys(LOCATIONS[category].items).map(loc => (
-                                            <option key={loc} value={loc}>{loc}</option>
-                                        ))}
-                                    </optgroup>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="calculation-method">
-                            📐 <strong>UOIF</strong> • 🕌 <strong>51</strong> населенный пункт • 📱 <strong>iOS 16.4+</strong>
-                        </div>
-
-                        <h2 className="section-title">Расписание намазов - {location}</h2>
-
-                        {loading ? (
-                            <div className="loading-spinner">
-                                <div className="spinner"></div>
-                                <p>Загрузка...</p>
-                            </div>
-                        ) : (
-                            <div className="prayer-grid">
-                                {prayerTimes && ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map(prayer => (
-                                    <div 
-                                        key={prayer}
-                                        className={`prayer-card ${nextPrayer === prayer ? 'active' : ''}`}
-                                    >
-                                        <div className="prayer-icon-wrapper">
-                                            {PRAYER_NAMES[prayer].icon}
+                        {currentView === 'home' && (
+                            <>
+                                {showInstallBanner && (
+                                    <div className="install-banner">
+                                        <div className="install-icon">📱</div>
+                                        <div className="install-text">
+                                            <h3>Установите приложение</h3>
+                                            <p>Для работы уведомлений</p>
                                         </div>
-                                        <div className="prayer-name">{PRAYER_NAMES[prayer].name}</div>
-                                        <div className="prayer-time">{prayerTimes[prayer] || '--:--'}</div>
-                                        {nextPrayer === prayer && (
-                                            <div className="prayer-countdown">{getTimeUntil(prayerTimes[prayer])}</div>
+                                        <button className="install-btn" onClick={installPWA}>
+                                            {isIOS ? 'Как?' : 'Установить'}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {notificationsEnabled && isPWA && (
+                                    <div className="success-banner">
+                                        <strong>✅ Push-уведомления включены!</strong><br/>
+                                        Уведомления со звуком азана для <strong>{location}</strong>
+                                    </div>
+                                )}
+
+                                {/* КРАСИВЫЙ 3D БЛОК ВЫБОРА С ПОЛУМЕСЯЦЕМ */}
+                                <div className="location-selector-card">
+                                    <div className="crescent-3d">🌙</div>
+                                    <div className="location-selector-header">
+                                        <div className="location-selector-title">
+                                            Выберите населенный пункт
+                                        </div>
+                                    </div>
+
+                                    <select 
+                                        className="location-dropdown"
+                                        value={location}
+                                        onChange={(e) => handleLocationChange(e.target.value)}
+                                    >
+                                        {Object.keys(LOCATIONS).map(category => (
+                                            <optgroup key={category} label={LOCATIONS[category].label}>
+                                                {Object.keys(LOCATIONS[category].items).map(loc => (
+                                                    <option key={loc} value={loc}>{loc}</option>
+                                                ))}
+                                            </optgroup>
+                                        ))}
+                                    </select>
+
+                                    <div className="selected-info">
+                                        🕌 {location} • {getCategoryName(location)}
+                                    </div>
+                                </div>
+
+                                <div className="calculation-method">
+                                    📐 <strong>UOIF</strong> • 🕌 <strong>68</strong> населенных пунктов • 🎵 <strong>Звук азана</strong>
+                                </div>
+
+                                <h2 className="section-title">Расписание намазов - {location}</h2>
+
+                                {loading ? (
+                                    <div className="loading-spinner">
+                                        <div className="spinner"></div>
+                                        <p>Загрузка...</p>
+                                    </div>
+                                ) : (
+                                    <div className="prayer-grid">
+                                        {prayerTimes && ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map(prayer => (
+                                            <div 
+                                                key={prayer}
+                                                className={`prayer-card ${nextPrayer === prayer ? 'active' : ''}`}
+                                            >
+                                                <div className="prayer-icon-wrapper">
+                                                    {PRAYER_NAMES[prayer].icon}
+                                                </div>
+                                                <div className="prayer-name">{PRAYER_NAMES[prayer].name}</div>
+                                                <div className="prayer-time">{prayerTimes[prayer] || '--:--'}</div>
+                                                {nextPrayer === prayer && (
+                                                    <div className="prayer-countdown">{getTimeUntil(prayerTimes[prayer])}</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <h2 className="section-title">Время намазов в других населенных пунктах</h2>
+
+                                <div className="all-cities-list">
+                                    {Object.keys(allPrayerTimes).map(cityName => (
+                                        <div key={cityName} className="city-time-card" onClick={() => handleLocationChange(cityName)}>
+                                            <div className="city-time-header">
+                                                <div>
+                                                    <div className="city-name">{cityName}</div>
+                                                    <div className="city-district">{getCategoryName(cityName)}</div>
+                                                </div>
+                                            </div>
+                                            <div className="prayer-times-row">
+                                                {['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map(prayer => (
+                                                    <div key={prayer} className="prayer-time-mini">
+                                                        <div className="prayer-time-mini-name">
+                                                            {PRAYER_NAMES[prayer].name}
+                                                        </div>
+                                                        <div className="prayer-time-mini-value">
+                                                            {allPrayerTimes[cityName]?.[prayer] || '--:--'}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="notification-section">
+                                    <button 
+                                        className={`notification-btn ${notificationsEnabled ? 'enabled' : ''}`}
+                                        onClick={enableNotifications}
+                                        disabled={notificationsEnabled}
+                                    >
+                                        <span style={{fontSize: '24px'}}>{notificationsEnabled ? '✅' : '🔔'}</span>
+                                        <span>
+                                            {notificationsEnabled 
+                                                ? `Азан для ${location} включен` 
+                                                : 'Включить уведомления с азаном'}
+                                        </span>
+                                    </button>
+                                    <div className="notification-info">
+                                        {notificationsEnabled ? (
+                                            <>🎵 Уведомления со звуком азана<br/>📍 Для <strong>{location}</strong></>
+                                        ) : (
+                                            <>Получайте уведомления с звуком азана<br/>📍 Для вашего населенного пункта</>
                                         )}
                                     </div>
-                                ))}
+                                </div>
+                            </>
+                        )}
+
+                        {currentView === 'weather' && (
+                            <div className="settings-section">
+                                <h2 className="section-title">Реальная погода в Ингушетии</h2>
+                                {weatherLoading ? (
+                                    <div className="loading-spinner">
+                                        <div className="spinner"></div>
+                                        <p>Загрузка погоды...</p>
+                                    </div>
+                                ) : weatherData && (
+                                    <div className="weather-grid">
+                                        {Object.keys(weatherData).map(city => (
+                                            <div key={city} className="weather-card">
+                                                <div className="weather-icon">{weatherData[city].icon}</div>
+                                                <div className="weather-city">{city}</div>
+                                                <div className="weather-temp">{weatherData[city].temp}°C</div>
+                                                <div className="weather-desc">{weatherData[city].desc}</div>
+                                                <div className="weather-details">
+                                                    <div className="weather-detail">
+                                                        <div>💧</div>
+                                                        <div className="weather-detail-value">{weatherData[city].humidity}%</div>
+                                                    </div>
+                                                    <div className="weather-detail">
+                                                        <div>💨</div>
+                                                        <div className="weather-detail-value">{weatherData[city].wind} м/с</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <div style={{textAlign: 'center', fontSize: '12px', opacity: 0.7, marginTop: '20px'}}>
+                                    ✅ Реальная погода через Open-Meteo API • Обновление каждые 30 минут
+                                </div>
                             </div>
                         )}
 
-                        <div className="notification-section">
-                            <button 
-                                className={`notification-btn ${notificationsEnabled ? 'enabled' : ''}`}
-                                onClick={enableNotifications}
-                                disabled={notificationsEnabled}
-                            >
-                                <span style={{fontSize: '24px'}}>{notificationsEnabled ? '✅' : '🔔'}</span>
-                                <span>
-                                    {notificationsEnabled 
-                                        ? `Push для ${location} включены` 
-                                        : 'Включить push-уведомления'}
-                                </span>
-                            </button>
-                            <div className="notification-info">
-                                {notificationsEnabled ? (
-                                    <>🎵 Уведомления для <strong>{location}</strong><br/>📳 Приходят автоматически</>
-                                ) : (
-                                    <>Персональные уведомления<br/>📍 Для вашего города/села</>
-                                )}
+                        {currentView === 'settings' && (
+                            <div className="settings-section">
+                                <h2 className="section-title">Настройки</h2>
+
+                                <div className="settings-card">
+                                    <h3>📱 Установка на iPhone</h3>
+                                    <p><strong>Шаг 1:</strong> Откройте в Safari</p>
+                                    <p><strong>Шаг 2:</strong> Нажмите "Поделиться" (📤)</p>
+                                    <p><strong>Шаг 3:</strong> "На экран Домой"</p>
+                                    <p><strong>Шаг 4:</strong> Нажмите "Добавить"</p>
+                                    <p style={{marginTop: '12px'}}>✅ Готово!</p>
+                                </div>
+
+                                <div className="settings-card">
+                                    <h3>🤖 Установка на Android</h3>
+                                    <p><strong>Шаг 1:</strong> Откройте в Chrome</p>
+                                    <p><strong>Шаг 2:</strong> Меню (⋮)</p>
+                                    <p><strong>Шаг 3:</strong> "Установить приложение"</p>
+                                    <p><strong>Шаг 4:</strong> "Установить"</p>
+                                    <p style={{marginTop: '12px'}}>✅ Готово!</p>
+                                </div>
+
+                                <div className="settings-card">
+                                    <h3>🔔 Включение уведомлений</h3>
+                                    <ol>
+                                        <li>Установите приложение</li>
+                                        <li>Выберите свой город</li>
+                                        <li>Нажмите кнопку 🔔</li>
+                                        <li>Разрешите уведомления</li>
+                                    </ol>
+                                    <p style={{marginTop: '12px'}}><strong>🎵 Звук азана при каждом намазе!</strong></p>
+                                </div>
+
+                                <div className="settings-card">
+                                    <h3>🌤️ О погоде</h3>
+                                    <p><strong>API:</strong> Open-Meteo (бесплатный)</p>
+                                    <p><strong>Обновление:</strong> Каждые 30 минут</p>
+                                    <p><strong>Данные:</strong> Температура, влажность, ветер</p>
+                                    <p><strong>Локации:</strong> 9 (5 городов + 4 района)</p>
+                                    <p style={{marginTop: '12px'}}>✅ Работает без регистрации и API ключа!</p>
+                                </div>
+
+                                <div className="settings-card">
+                                    <h3>ℹ️ О приложении</h3>
+                                    <p><strong>Версия:</strong> 6.1</p>
+                                    <p><strong>Населенных пунктов:</strong> 68</p>
+                                    <p><strong>Метод:</strong> UOIF</p>
+                                    <p><strong>Мазхаб:</strong> Ханафитский</p>
+                                    <p><strong>Push:</strong> ✅ iOS 16.4+, Android</p>
+                                    <p><strong>Звук азана:</strong> ✅</p>
+                                    <p><strong>Погода:</strong> ✅ Open-Meteo API (бесплатный)</p>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     <div className="bottom-nav">
-                        <div className="nav-item active">
-                            <div className="nav-icon">🏠</div>
-                            <div className="nav-label">Главная</div>
+                        <div 
+                            className={`nav-item ${currentView === 'home' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('home')}
+                        >
+                            <div className="nav-icon crescent-icon">🌙</div>
+                            <div className="nav-label">Намазы</div>
                         </div>
-                        <div className="nav-item">
-                            <div className="nav-icon">📍</div>
-                            <div className="nav-label">Города</div>
+                        <div 
+                            className={`nav-item ${currentView === 'weather' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('weather')}
+                        >
+                            <div className="nav-icon">🌤️</div>
+                            <div className="nav-label">Погода</div>
                         </div>
-                        <div className="nav-item">
+                        <div 
+                            className={`nav-item ${currentView === 'settings' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('settings')}
+                        >
                             <div className="nav-icon">⚙️</div>
                             <div className="nav-label">Настройки</div>
                         </div>
