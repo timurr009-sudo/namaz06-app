@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Время намазов | Республика Ингушетия</title>
+    <!-- Шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ffaa;
+            --primary-glow: rgba(0, 255, 170, 0.4);
+            --bg-glass: rgba(15, 20, 30, 0.55);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #a0aabf;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            width: 100%; height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #050814;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* 3D Контейнер */
+        #canvas-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* UI Поверх 3D */
+        .ui-layer {
+            position: relative;
+            z-index: 2;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            pointer-events: none; /* Пропускаем клики к 3D, где нет UI */
+        }
+
+        .glass-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            pointer-events: auto; /* Возвращаем клики для UI */
+        }
+
+        .header-panel {
+            padding: 30px 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .date-display {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        /* Селектор локаций */
+        .location-selector {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px 20px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            border-radius: 12px;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, select:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        select option, select optgroup {
+            background: #0d1117;
+            color: #fff;
+        }
+
+        .selector-arrow {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            width: 12px; height: 12px;
+            border-right: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: translateY(-70%) rotate(45deg);
+            pointer-events: none;
+        }
+
+        /* Карточки Намазов */
+        .prayers-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 1000px;
+            pointer-events: auto;
+        }
+
+        .prayer-card {
+            flex: 1;
+            min-width: 140px; max-width: 180px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prayer-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(0, 255, 170, 0.15);
+        }
+
+        /* Подсветка следующего намаза */
+        .prayer-card.active-prayer {
+            border-color: var(--primary);
+            background: rgba(0, 255, 170, 0.1);
+            box-shadow: 0 0 25px var(--primary-glow);
+        }
+
+        .prayer-card.active-prayer h3 {
+            color: #fff;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .prayer-name {
+            font-size: 1.1rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .prayer-time {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #loader {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: none;
+            z-index: 10;
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            body { overflow-y: auto; overflow-x: hidden; }
+            .ui-layer { justify-content: flex-start; padding-top: 40px; height: auto; min-height: 100vh;}
+            .prayers-grid { gap: 15px; }
+            .prayer-card { min-width: 45%; max-width: 45%; padding: 15px; }
+            .prayer-time { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Фон -->
+    <div id="canvas-container"></div>
+    <div id="loader">Обновление расписания...</div>
+
+    <!-- UI -->
+    <div class="ui-layer">
+        <div class="glass-panel header-panel">
+            <h1>Время намазов</h1>
+            <div class="date-display" id="current-date"></div>
+            
+            <!-- Выбор городов и сел Ингушетии -->
+            <div class="location-selector">
+                <select id="city-select" onchange="changeLocation()">
+                    <optgroup label="Города">
+                        <option value="43.1667,44.8000" selected>Магас</option>
+                        <option value="43.2266,44.7628">Назрань</option>
+                        <option value="43.3039,44.9039">Карабулак</option>
+                        <option value="43.5117,44.5850">Малгобек</option>
+                        <option value="43.3175,45.0483">Сунжа</option>
+                    </optgroup>
+                    <optgroup label="Назрановский район">
+                        <option value="43.1897,44.8061">Экажево</option>
+                        <option value="43.2392,44.6542">Кантышево</option>
+                        <option value="43.2750,44.8213">Плиево</option>
+                        <option value="43.1861,44.8872">Сурхахи</option>
+                        <option value="43.2986,44.9228">Яндаре</option>
+                        <option value="43.1497,44.8528">Али-Юрт</option>
+                        <option value="43.2500,44.7833">Барсуки</option>
+                        <option value="43.2847,44.6758">Долаково</option>
+                    </optgroup>
+                    <optgroup label="Малгобекский район">
+                        <option value="43.5131,44.5622">Сагопши</option>
+                        <option value="43.5197,44.6853">Инарки</option>
+                        <option value="43.4694,44.6983">Пседах</option>
+                        <option value="43.3769,44.7578">Верхние Ачалуки</option>
+                        <option value="43.4739,44.7675">Нижние Ачалуки</option>
+                        <option value="43.5414,44.7886">Зязиков-Юрт</option>
+                        <option value="43.5469,44.8967">Новый Редант</option>
+                        <option value="43.5900,44.6100">Южное</option>
+                    </optgroup>
+                    <optgroup label="Сунженский район">
+                        <option value="43.2386,45.0567">Нестеровская</option>
+                        <option value="43.3108,44.9953">Троицкая</option>
+                        <option value="43.1044,45.0208">Галашки</option>
+                        <option value="43.1506,45.0483">Алхасты</option>
+                        <option value="43.0644,45.0114">Мужичи</option>
+                        <option value="42.9903,45.0683">Алкун</option>
+                        <option value="43.1644,45.1481">Даттых</option>
+                    </optgroup>
+                    <optgroup label="Джейрахский район">
+                        <option value="42.8183,44.6758">Джейрах</option>
+                        <option value="42.8094,44.7175">Армхи</option>
+                        <option value="42.8122,44.8028">Ольгети</option>
+                        <option value="42.8425,44.8878">Гули</option>
+                    </optgroup>
+                </select>
+                <div class="selector-arrow"></div>
+            </div>
+        </div>
+
+        <div class="prayers-grid">
+            <div class="glass-panel prayer-card" id="card-fajr">
+                <h3 class="prayer-name">Фаджр</h3>
+                <p class="prayer-time" id="fajr-time">--:--</p>
+            </div>
+            <div class="glass-panel prayer-card" id="card-dhuhr">
+                <h3 class="prayer-name">Зухр</h3>
+                <p class="prayer-time" id="dhuhr-time">--:--</p>
+            </div>
+            <div class="glass-panel prayer-card" id="card-asr">
+                <h3 class="prayer-name">Аср</h3>
+                <p class="prayer-time" id="asr-time">--:--</p>
+            </div>
+            <div class="glass-panel prayer-card" id="card-maghrib">
+                <h3 class="prayer-name">Магриб</h3>
+                <p class="prayer-time" id="maghrib-time">--:--</p>
+            </div>
+            <div class="glass-panel prayer-card" id="card-isha">
+                <h3 class="prayer-name">Иша</h3>
+                <p class="prayer-time" id="isha-time">--:--</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Библиотека Three.js для 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        /* =========================================
+           ЧАСТЬ 1: ЛОГИКА РАСПИСАНИЯ НАМАЗОВ
+        ========================================= */
+
+        function setDate() {
+            const date = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            let dateStr = date.toLocaleDateString('ru-RU', options);
+            document.getElementById('current-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        }
+
+        function timeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Подсветка следующего намаза
+        function highlightNextPrayer(timings) {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            document.querySelectorAll('.prayer-card').forEach(card => card.classList.remove('active-prayer'));
+
+            const schedule = [
+                { id: 'card-fajr', time: timeToMinutes(timings.Fajr) },
+                { id: 'card-dhuhr', time: timeToMinutes(timings.Dhuhr) },
+                { id: 'card-asr', time: timeToMinutes(timings.Asr) },
+                { id: 'card-maghrib', time: timeToMinutes(timings.Maghrib) },
+                { id: 'card-isha', time: timeToMinutes(timings.Isha) }
+            ];
+
+            let nextPrayerId = 'card-fajr'; // Если Иша прошел, следующий — завтрашний Фаджр
+
+            for (let i = 0; i < schedule.length; i++) {
+                if (currentMinutes < schedule[i].time) {
+                    nextPrayerId = schedule[i].id;
+                    break;
+                }
+            }
+
+            document.getElementById(nextPrayerId).classList.add('active-prayer');
+        }
+
+        async function fetchPrayerTimes(lat, lng) {
+            const date = new Date();
+            const loader = document.getElementById('loader');
+            const grid = document.querySelector('.prayers-grid');
+            
+            loader.style.display = 'block';
+            grid.style.opacity = '0.3';
+
+            // method=14 : Spiritual Administration of Muslims of Russia (ДУМ РФ)
+            // school=0 : Shafi (Стандарт для Ингушетии в рамках API)
+            const url = `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${lat}&longitude=${lng}&method=14&school=0`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const timings = data.data.timings;
+
+                document.getElementById('fajr-time').textContent = timings.Fajr;
+                document.getElementById('dhuhr-time').textContent = timings.Dhuhr;
+                document.getElementById('asr-time').textContent = timings.Asr;
+                document.getElementById('maghrib-time').textContent = timings.Maghrib;
+                document.getElementById('isha-time').textContent = timings.Isha;
+
+                highlightNextPrayer(timings);
+            } catch (error) {
+                console.error('Ошибка API:', error);
+                document.getElementById('current-date').textContent = "Сбой соединения с сервером";
+            } finally {
+                loader.style.display = 'none';
+                grid.style.opacity = '1';
+            }
+        }
+
+        function changeLocation() {
+            const select = document.getElementById('city-select');
+            const [lat, lng] = select.value.split(',');
+            fetchPrayerTimes(lat, lng);
+        }
+
+        // Запуск
+        setDate();
+        changeLocation(); 
+        
+        // Автообновление расписания и подсветки каждую минуту
+        setInterval(() => {
+            setDate();
+            changeLocation();
+        }, 60000); 
+
+
+        /* =========================================
+           ЧАСТЬ 2: 3D ПОЛУМЕСЯЦ И ЗВЕЗДА (DELUXE)
+        ========================================= */
+        const container = document.getElementById('canvas-container');
+
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050814, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1400);
+        camera.position.set(0, 2.0, 56);
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+        container.appendChild(renderer.domElement);
+
+        /* --- Свет --- */
+        scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+
+        const keyLight = new THREE.PointLight(0xffd7a3, 100, 250); 
+        keyLight.position.set(26, 30, 44);
+        scene.add(keyLight);
+
+        const rimLight = new THREE.PointLight(0x5bffe7, 60, 250);
+        rimLight.position.set(-34, -10, 30);
+        scene.add(rimLight);
+
+        const topFill = new THREE.DirectionalLight(0xffffff, 0.3);
+        topFill.position.set(-8, 20, 15);
+        scene.add(topFill);
+
+        /* --- Группа для параллакса --- */
+        const symbolGroup = new THREE.Group();
+        scene.add(symbolGroup);
+
+        /* Вспомогательное: спрайтовый ореол (Halo) */
+        function makeHaloSprite(color1, color2, size, opacity) {
+            const c = document.createElement('canvas');
+            c.width = 256; c.height = 256;
+            const ctx = c.getContext('2d');
+
+            const grd = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+            grd.addColorStop(0.00, color1);
+            grd.addColorStop(0.35, color2);
+            grd.addColorStop(1.00, 'rgba(0,0,0,0)');
+
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, 256, 256);
+
+            const tex = new THREE.CanvasTexture(c);
+            const mat = new THREE.SpriteMaterial({
+                map: tex, transparent: true, opacity: opacity,
+                depthWrite: false, blending: THREE.AdditiveBlending
+            });
+
+            const spr = new THREE.Sprite(mat);
+            spr.scale.set(size, size, 1);
+            return spr;
+        }
+
+        /* --- Полумесяц --- */
+        function createCrescent() {
+            const shape = new THREE.Shape();
+            shape.absarc(0, 0, 15.0, 0, Math.PI * 2, false);
+
+            const hole = new THREE.Path();
+            hole.absarc(5.6, 0, 12.0, 0, Math.PI * 2, true); // Сдвиг для формы полумесяца
+            shape.holes.push(hole);
+
+            const geo = new THREE.ExtrudeGeometry(shape, {
+                depth: 2.8, bevelEnabled: true,
+                bevelThickness: 1.0, bevelSize: 0.85,
+                bevelSegments: 10, curveSegments: 96
+            });
+            geo.center();
+
+            // Материал: Золото
+            const gold = new THREE.MeshPhysicalMaterial({
+                color: 0xffd06a, metalness: 1.0, roughness: 0.18,
+                clearcoat: 1.0, clearcoatRoughness: 0.10,
+                emissive: 0x1c0f00, emissiveIntensity: 0.22
+            });
+
+            // Материал: Изумрудная эмаль (тонкий слой поверх)
+            const enamel = new THREE.MeshPhysicalMaterial({
+                color: 0x0b3a2d, metalness: 0.35, roughness: 0.22,
+                clearcoat: 1.0, clearcoatRoughness: 0.08,
+                transparent: true, opacity: 0.15, depthWrite: false
+            });
+
+            const meshGold = new THREE.Mesh(geo, gold);
+            meshGold.rotation.set(-0.18, 0.30, 0.58);
+            meshGold.position.set(0, 0, -8);
+
+            const meshEnamel = new THREE.Mesh(geo.clone(), enamel);
+            meshEnamel.rotation.copy(meshGold.rotation);
+            meshEnamel.position.copy(meshGold.position);
+            meshEnamel.scale.setScalar(1.001);
+
+            // Свечение по контуру
+            const edgeGlow = new THREE.Mesh(
+                geo.clone(),
+                new THREE.MeshBasicMaterial({
+                    color: 0x00ffbf, transparent: true, opacity: 0.10,
+                    blending: THREE.AdditiveBlending, depthWrite: false
+                })
+            );
+            edgeGlow.rotation.copy(meshGold.rotation);
+            edgeGlow.position.copy(meshGold.position);
+            edgeGlow.scale.setScalar(1.035);
+
+            // Ореол позади
+            const halo = makeHaloSprite('rgba(0,255,190,0.35)', 'rgba(255,208,106,0.10)', 120, 0.55);
+            halo.position.set(0, 0, -18);
+
+            const g = new THREE.Group();
+            g.add(halo); g.add(edgeGlow); g.add(meshGold); g.add(meshEnamel);
+            return { g, edgeGlow, halo };
+        }
+
+        /* --- Звезда --- */
+        function createStar() {
+            const starShape = new THREE.Shape();
+            const spikes = 5, outer = 3.1, inner = 1.35;
+            let rot = Math.PI / 2 * 3;
+            const step = Math.PI / spikes;
+
+            starShape.moveTo(0, -outer);
+            for (let i = 0; i < spikes; i++) {
+                starShape.lineTo(Math.cos(rot) * outer, Math.sin(rot) * outer);
+                rot += step;
+                starShape.lineTo(Math.cos(rot) * inner, Math.sin(rot) * inner);
+                rot += step;
+            }
+            starShape.closePath();
+
+            const geo = new THREE.ExtrudeGeometry(starShape, {
+                depth: 1.6, bevelEnabled: true,
+                bevelThickness: 0.55, bevelSize: 0.35,
+                bevelSegments: 8, curveSegments: 48
+            });
+            geo.center();
+
+            const mat = new THREE.MeshPhysicalMaterial({
+                color: 0xfff0b0, metalness: 1.0, roughness: 0.22,
+                clearcoat: 1.0, clearcoatRoughness: 0.12,
+                emissive: 0x2a2100, emissiveIntensity: 0.20
+            });
+
+            const mesh = new THREE.Mesh(geo, mat);
+            // Размещение внутри выреза полумесяца
+            mesh.position.set(9.2, 5.3, -5.6);
+            mesh.rotation.set(0.25, -0.25, 0.15);
+
+            const halo = makeHaloSprite('rgba(255,240,176,0.55)', 'rgba(255,208,106,0.12)', 44, 0.70);
+            halo.position.copy(mesh.position);
+            halo.position.z -= 6.0;
+
+            const glow = new THREE.Mesh(
+                geo.clone(),
+                new THREE.MeshBasicMaterial({
+                    color: 0xffd06a, transparent: true, opacity: 0.10,
+                    blending: THREE.AdditiveBlending, depthWrite: false
+                })
+            );
+            glow.position.copy(mesh.position);
+            glow.rotation.copy(mesh.rotation);
+            glow.scale.setScalar(1.08);
+
+            const g = new THREE.Group();
+            g.add(halo); g.add(glow); g.add(mesh);
+            return { g, mesh, halo };
+        }
+
+        /* --- Звездный фон и искры --- */
+        function createParticles(count, size, isSparkle) {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(count * 3);
+            const col = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                const i3 = i * 3;
+                if (isSparkle) {
+                    // Искры кучкуются вокруг символа
+                    const r = Math.pow(Math.random(), 0.55) * 55;
+                    const a = Math.random() * Math.PI * 2;
+                    pos[i3] = Math.cos(a) * r;
+                    pos[i3 + 1] = (Math.random() - 0.5) * 40;
+                    pos[i3 + 2] = Math.sin(a) * r - 30;
+                } else {
+                    // Звезды по всему фону
+                    pos[i3] = (Math.random() - 0.5) * 260;
+                    pos[i3 + 1] = (Math.random() - 0.5) * 260;
+                    pos[i3 + 2] = (Math.random() - 0.5) * 160 - 80;
+                }
+
+                const t = Math.random();
+                if (t > 0.8) { col[i3]=0.3; col[i3+1]=1.0; col[i3+2]=0.85; } // Изумруд
+                else if (t > 0.5) { col[i3]=1.0; col[i3+1]=0.86; col[i3+2]=0.45; } // Золото
+                else { col[i3]=1.0; col[i3+1]=1.0; col[i3+2]=1.0; } // Белый
+            }
+
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+
+            const mat = new THREE.PointsMaterial({
+                size: size, vertexColors: true, transparent: true,
+                opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false
+            });
+
+            return new THREE.Points(geo, mat);
+        }
+
+        // Добавляем объекты на сцену
+        const objCrescent = createCrescent();
+        const objStar = createStar();
+        symbolGroup.add(objCrescent.g);
+        symbolGroup.add(objStar.g);
+
+        const sparkles = createParticles(900, 0.55, true);
+        const farStars = createParticles(1600, 0.45, false);
+        scene.add(sparkles);
+        scene.add(farStars);
+
+        /* --- Параллакс и Анимация --- */
+        let mx = 0, my = 0;
+        document.addEventListener('mousemove', (e) => {
+            mx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+            my = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+
+            // Плавное вращение группы (полумесяц + звезда)
+            symbolGroup.rotation.y = 0.25 + Math.sin(t * 0.18) * 0.06;
+            symbolGroup.rotation.x = -0.05 + Math.sin(t * 0.22) * 0.05;
+
+            // Реакция на мышь
+            symbolGroup.rotation.y += (mx * 0.18 - symbolGroup.rotation.y) * 0.03;
+            symbolGroup.rotation.x += (-my * 0.12 - symbolGroup.rotation.x) * 0.03;
+
+            // Мерцание
+            objCrescent.edgeGlow.material.opacity = 0.085 + Math.sin(t * 1.4) * 0.018;
+            objCrescent.halo.material.opacity = 0.50 + Math.sin(t * 0.8) * 0.08;
+            objStar.halo.material.opacity = 0.62 + Math.sin(t * 1.1) * 0.10;
+
+            // Вращение звезды
+            objStar.mesh.rotation.z += 0.0032;
+
+            // Движение частиц
+            farStars.rotation.y = t * 0.02;
+            farStars.rotation.x = t * 0.01;
+            sparkles.rotation.y = -t * 0.035;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
