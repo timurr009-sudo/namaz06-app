@@ -1,660 +1,504 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Время намазов | Республика Ингушетия</title>
-    <!-- Шрифты -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #00ffaa;
-            --primary-glow: rgba(0, 255, 170, 0.4);
-            --bg-glass: rgba(15, 20, 30, 0.55);
-            --border-glass: rgba(255, 255, 255, 0.1);
-            --text-main: #ffffff;
-            --text-muted: #a0aabf;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#e97a95" />
+  <title>Детская Одежда</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  <style>
+    :root{
+      --pink:#e97a95;
+      --dark:#2b2533;
+      --green:#12c96b;
+      --bg:linear-gradient(135deg,#fdf1f4 0%,#f4fdf8 50%,#fdf5e6 100%);
+      --shadow:0 4px 20px rgba(0,0,0,.06);
+      --r:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Montserrat,sans-serif;-webkit-tap-highlight-color:transparent}
+    body{background:var(--bg);color:var(--dark);min-height:100vh;overflow-x:hidden}
 
-        body, html {
-            width: 100%; height: 100%;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #050814;
-            color: var(--text-main);
-            overflow: hidden;
-        }
+    .hero{padding:52px 14px 18px;text-align:center;position:relative;overflow:hidden}
+    .hero::before,.hero::after{content:"";position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(253,224,233,.25))}
+    .hero::before{width:220px;height:220px;left:-70px;top:-70px}
+    .hero::after{width:160px;height:160px;right:-50px;bottom:-50px}
+    .hero h1{font-size:clamp(2rem,9vw,4rem);line-height:1.08;margin-bottom:8px}
+    .hero .pink{color:var(--pink);font-weight:600}
+    .hero .dark{color:var(--dark);font-weight:800}
+    .hero p{color:#888;font-size:clamp(11px,3.5vw,14px)}
 
-        /* 3D Контейнер */
-        #canvas-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-        }
+    .wrap{max-width:1200px;margin:0 auto;padding:10px 10px 84px}
+    .title{text-align:center;font-size:clamp(1.05rem,4vw,1.55rem);font-weight:500;margin:10px 0 18px}
+    .title::after{content:"";display:block;width:40px;height:2px;background:var(--pink);margin:8px auto 0}
 
-        /* UI Поверх 3D */
-        .ui-layer {
-            position: relative;
-            z-index: 2;
-            width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            pointer-events: none; /* Пропускаем клики к 3D, где нет UI */
-        }
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    @media (max-width:860px){.grid{grid-template-columns:repeat(3,1fr);gap:7px}}
 
-        .glass-panel {
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            pointer-events: auto; /* Возвращаем клики для UI */
-        }
+    .card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s ease}
+    .card:active{transform:scale(.97)}
+    .img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;cursor:zoom-in}
+    .body{padding:clamp(7px,2vw,12px);display:flex;flex-direction:column;gap:6px;flex:1}
+    .name{font-size:clamp(10px,2.7vw,14px);font-weight:800;line-height:1.2}
+    .desc{font-size:clamp(9px,2.2vw,12px);color:#666;line-height:1.3;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .btn{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--green);color:#fff;text-decoration:none;border:0;border-radius:18px;padding:clamp(6px,2vw,10px);font-weight:800;font-size:clamp(9px,2vw,12px)}
+    .btn svg{width:13px;height:13px;fill:currentColor}
 
-        .header-panel {
-            padding: 30px 40px;
-            text-align: center;
-            margin-bottom: 40px;
-            width: 100%;
-            max-width: 800px;
-        }
+    #lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:none;align-items:center;justify-content:center;perspective:1200px;padding:20px}
+    #lb.open{display:flex}
+    #lbClose{position:absolute;top:12px;right:18px;color:#fff;font-size:40px;line-height:1;cursor:pointer}
+    #lbImg{max-width:93vw;max-height:86vh;border-radius:16px;box-shadow:0 40px 80px rgba(0,0,0,.7);cursor:zoom-out;
+      opacity:0;transform:rotateX(70deg) scale(.3) translateY(80px);
+      transition:transform .55s cubic-bezier(.175,.885,.32,1.275),opacity .4s ease}
+    #lb.open #lbImg{opacity:1;transform:rotateX(0) scale(1) translateY(0)}
 
-        h1 {
-            font-size: clamp(1.8rem, 4vw, 3rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px var(--primary-glow);
-        }
+    #gear{position:fixed;left:18px;bottom:18px;width:46px;height:46px;border-radius:50%;border:0;
+      background:rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;z-index:100;font-size:22px;transition:.3s}
+    #gear:hover{background:var(--pink);transform:rotate(90deg)}
 
-        .date-display {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 25px;
-            font-weight: 300;
-        }
+    #screenClient{display:block}
+    #screenLogin{display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px}
+    #screenAdmin{display:none;min-height:100vh;background:#f5f5f5;padding:12px}
 
-        /* Селектор локаций */
-        .location-selector {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
+    .loginCard{width:100%;max-width:360px;background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.08);padding:34px 28px}
+    .loginCard h2{text-align:center;margin-bottom:18px;font-size:1.2rem}
+    .inp{width:100%;padding:12px 14px;border:1.5px solid #eee;border-radius:10px;margin-bottom:10px;font-size:14px}
+    .inp:focus{outline:none;border-color:var(--pink)}
+    .btnPink{width:100%;padding:13px;border:0;border-radius:10px;background:var(--pink);color:#fff;font-weight:800;cursor:pointer;font-size:14px}
+    .btnGray{width:100%;padding:11px;border:0;border-radius:10px;background:#f0f0f0;color:#333;font-weight:700;cursor:pointer;margin-top:8px;font-size:14px}
 
-        select {
-            width: 100%;
-            padding: 15px 20px;
-            font-family: inherit;
-            font-size: 1.1rem;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 255, 170, 0.3);
-            border-radius: 12px;
-            appearance: none;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+    .topbar{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .topbar h2{font-size:1rem}
+    .row{display:flex;gap:8px}
+    .btnSm{padding:8px 12px;border:0;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer}
+    .btnSm.pink{background:var(--pink);color:#fff}
+    .btnSm.gray{background:#eee;color:#333}
+    .panel{display:none;background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+    .panel h3{margin-bottom:12px;font-size:1rem}
+    .lab{font-size:10px;font-weight:900;color:#999;text-transform:uppercase;margin-bottom:4px;display:block}
+    textarea.inp{resize:none}
+    #prev{width:84px;height:84px;border-radius:10px;object-fit:cover;display:none;margin-top:8px}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .actions button{flex:1;padding:12px}
 
-        select:focus, select:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
+    .aItem{background:#fff;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:9px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .aItem img{width:54px;height:54px;border-radius:8px;object-fit:cover}
+    .aInfo{flex:1;min-width:0}
+    .aName{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .aMeta{font-size:11px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .aAct{display:flex;gap:6px}
+    .iconBtn{border:0;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:900}
+    .iconBtn.edit{background:#eee}
+    .iconBtn.del{background:#ff4757;color:#fff}
 
-        select option, select optgroup {
-            background: #0d1117;
-            color: #fff;
-        }
+    #toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);
+      background:#2b2533;color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;font-weight:600;z-index:10000;
+      opacity:0;pointer-events:none;transition:opacity .25s ease;max-width:90vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #toast.show{opacity:1}
 
-        .selector-arrow {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            width: 12px; height: 12px;
-            border-right: 2px solid var(--primary);
-            border-bottom: 2px solid var(--primary);
-            transform: translateY(-70%) rotate(45deg);
-            pointer-events: none;
-        }
-
-        /* Карточки Намазов */
-        .prayers-grid {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-            max-width: 1000px;
-            pointer-events: auto;
-        }
-
-        .prayer-card {
-            flex: 1;
-            min-width: 140px; max-width: 180px;
-            padding: 25px 20px;
-            text-align: center;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .prayer-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(0, 255, 170, 0.15);
-        }
-
-        /* Подсветка следующего намаза */
-        .prayer-card.active-prayer {
-            border-color: var(--primary);
-            background: rgba(0, 255, 170, 0.1);
-            box-shadow: 0 0 25px var(--primary-glow);
-        }
-
-        .prayer-card.active-prayer h3 {
-            color: #fff;
-            text-shadow: 0 0 10px var(--primary);
-        }
-
-        .prayer-name {
-            font-size: 1.1rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .prayer-time {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        #loader {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--primary);
-            font-size: 1.2rem;
-            display: none;
-            z-index: 10;
-        }
-
-        /* Адаптив */
-        @media (max-width: 768px) {
-            body { overflow-y: auto; overflow-x: hidden; }
-            .ui-layer { justify-content: flex-start; padding-top: 40px; height: auto; min-height: 100vh;}
-            .prayers-grid { gap: 15px; }
-            .prayer-card { min-width: 45%; max-width: 45%; padding: 15px; }
-            .prayer-time { font-size: 1.8rem; }
-        }
-    </style>
+    .loader{grid-column:1/-1;text-align:center;padding:44px;color:var(--pink);font-weight:800}
+    .spin{display:inline-block;width:28px;height:28px;border:3px solid rgba(233,122,149,.2);border-top-color:var(--pink);border-radius:50%;animation:rot .7s linear infinite;margin-bottom:8px}
+    @keyframes rot{to{transform:rotate(360deg)}}
+  </style>
 </head>
+
 <body>
-    <!-- Фон -->
-    <div id="canvas-container"></div>
-    <div id="loader">Обновление расписания...</div>
 
-    <!-- UI -->
-    <div class="ui-layer">
-        <div class="glass-panel header-panel">
-            <h1>Время намазов</h1>
-            <div class="date-display" id="current-date"></div>
-            
-            <!-- Выбор городов и сел Ингушетии -->
-            <div class="location-selector">
-                <select id="city-select" onchange="changeLocation()">
-                    <optgroup label="Города">
-                        <option value="43.1667,44.8000" selected>Магас</option>
-                        <option value="43.2266,44.7628">Назрань</option>
-                        <option value="43.3039,44.9039">Карабулак</option>
-                        <option value="43.5117,44.5850">Малгобек</option>
-                        <option value="43.3175,45.0483">Сунжа</option>
-                    </optgroup>
-                    <optgroup label="Назрановский район">
-                        <option value="43.1897,44.8061">Экажево</option>
-                        <option value="43.2392,44.6542">Кантышево</option>
-                        <option value="43.2750,44.8213">Плиево</option>
-                        <option value="43.1861,44.8872">Сурхахи</option>
-                        <option value="43.2986,44.9228">Яндаре</option>
-                        <option value="43.1497,44.8528">Али-Юрт</option>
-                        <option value="43.2500,44.7833">Барсуки</option>
-                        <option value="43.2847,44.6758">Долаково</option>
-                    </optgroup>
-                    <optgroup label="Малгобекский район">
-                        <option value="43.5131,44.5622">Сагопши</option>
-                        <option value="43.5197,44.6853">Инарки</option>
-                        <option value="43.4694,44.6983">Пседах</option>
-                        <option value="43.3769,44.7578">Верхние Ачалуки</option>
-                        <option value="43.4739,44.7675">Нижние Ачалуки</option>
-                        <option value="43.5414,44.7886">Зязиков-Юрт</option>
-                        <option value="43.5469,44.8967">Новый Редант</option>
-                        <option value="43.5900,44.6100">Южное</option>
-                    </optgroup>
-                    <optgroup label="Сунженский район">
-                        <option value="43.2386,45.0567">Нестеровская</option>
-                        <option value="43.3108,44.9953">Троицкая</option>
-                        <option value="43.1044,45.0208">Галашки</option>
-                        <option value="43.1506,45.0483">Алхасты</option>
-                        <option value="43.0644,45.0114">Мужичи</option>
-                        <option value="42.9903,45.0683">Алкун</option>
-                        <option value="43.1644,45.1481">Даттых</option>
-                    </optgroup>
-                    <optgroup label="Джейрахский район">
-                        <option value="42.8183,44.6758">Джейрах</option>
-                        <option value="42.8094,44.7175">Армхи</option>
-                        <option value="42.8122,44.8028">Ольгети</option>
-                        <option value="42.8425,44.8878">Гули</option>
-                    </optgroup>
-                </select>
-                <div class="selector-arrow"></div>
-            </div>
-        </div>
+  <!-- CLIENT -->
+  <div id="screenClient">
+    <div class="hero">
+      <h1><span class="pink">Детская</span><br><span class="dark">Одежда</span></h1>
+      <p>Качественная и стильная одежда для ваших малышей ✨</p>
+    </div>
+    <div class="wrap">
+      <div class="title">Наши товары</div>
+      <div id="grid" class="grid">
+        <div class="loader"><span class="spin"></span><br>Загрузка...</div>
+      </div>
+    </div>
+    <button id="gear" title="Админ" type="button">⚙️</button>
+  </div>
 
-        <div class="prayers-grid">
-            <div class="glass-panel prayer-card" id="card-fajr">
-                <h3 class="prayer-name">Фаджр</h3>
-                <p class="prayer-time" id="fajr-time">--:--</p>
-            </div>
-            <div class="glass-panel prayer-card" id="card-dhuhr">
-                <h3 class="prayer-name">Зухр</h3>
-                <p class="prayer-time" id="dhuhr-time">--:--</p>
-            </div>
-            <div class="glass-panel prayer-card" id="card-asr">
-                <h3 class="prayer-name">Аср</h3>
-                <p class="prayer-time" id="asr-time">--:--</p>
-            </div>
-            <div class="glass-panel prayer-card" id="card-maghrib">
-                <h3 class="prayer-name">Магриб</h3>
-                <p class="prayer-time" id="maghrib-time">--:--</p>
-            </div>
-            <div class="glass-panel prayer-card" id="card-isha">
-                <h3 class="prayer-name">Иша</h3>
-                <p class="prayer-time" id="isha-time">--:--</p>
-            </div>
-        </div>
+  <!-- LIGHTBOX -->
+  <div id="lb" role="dialog" aria-modal="true">
+    <div id="lbClose">&times;</div>
+    <img id="lbImg" alt="Фото" />
+  </div>
+
+  <!-- LOGIN (логин/пароль нигде не отображаются) -->
+  <div id="screenLogin">
+    <div class="loginCard">
+      <h2>🔐 Вход в админку</h2>
+      <input id="login" class="inp" placeholder="Логин"  autocomplete="off" />
+      <input id="pass"  class="inp" placeholder="Пароль" type="password" autocomplete="new-password" />
+      <button id="btnLogin"  class="btnPink" type="button">Войти</button>
+      <button id="btnCancel" class="btnGray" type="button">Отмена</button>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="screenAdmin">
+    <div class="topbar">
+      <h2>⚙️ Управление товарами</h2>
+      <div class="row">
+        <button id="btnOpenForm" class="btnSm pink" type="button">+ Добавить</button>
+        <button id="btnLogout"   class="btnSm gray" type="button">Выйти</button>
+      </div>
     </div>
 
-    <!-- Библиотека Three.js для 3D -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div id="panel" class="panel">
+      <h3 id="formTitle">Новый товар</h3>
+      <input id="pid" type="hidden" />
+      <label class="lab">Название</label>
+      <input id="ptitle" class="inp" placeholder="Например: Носочки" />
+      <label class="lab">Описание</label>
+      <textarea id="pdesc" class="inp" rows="3" placeholder="Размер, состав, цена..."></textarea>
+      <label class="lab">Ссылка WhatsApp / Telegram</label>
+      <input id="plink" class="inp" placeholder="https://wa.me/..." />
+      <label class="lab">Фото</label>
+      <input id="pimg" class="inp" type="file" accept="image/*" />
+      <img id="prev" alt="preview" />
+      <div class="actions">
+        <button id="btnSave"      class="btnSm pink" type="button">💾 Сохранить</button>
+        <button id="btnCloseForm" class="btnSm gray" type="button">Отмена</button>
+      </div>
+    </div>
 
-    <script>
-        /* =========================================
-           ЧАСТЬ 1: ЛОГИКА РАСПИСАНИЯ НАМАЗОВ
-        ========================================= */
+    <div id="alist"></div>
+  </div>
 
-        function setDate() {
-            const date = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            let dateStr = date.toLocaleDateString('ru-RU', options);
-            document.getElementById('current-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-        }
+  <div id="toast"></div>
 
-        function timeToMinutes(timeStr) {
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            return hours * 60 + minutes;
-        }
+  <!-- ✅ ВСЕ 3 ИМПОРТА ОДНОЙ ВЕРСИИ 12.9.0 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs, addDoc,
+      updateDoc, deleteDoc, doc, query, orderBy
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import {
+      getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-        // Подсветка следующего намаза
-        function highlightNextPrayer(timings) {
-            const now = new Date();
-            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    // ── Firebase config (твой проект) ────────────────────────
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDCj2WqkiH0o0UerQLLgHZGq2YwOB0u98I",
+      authDomain:        "detskaya-odejda.firebaseapp.com",
+      projectId:         "detskaya-odejda",
+      storageBucket:     "detskaya-odejda.firebasestorage.app",
+      messagingSenderId: "1033590447197",
+      appId:             "1:1033590447197:web:dc1d6c37c284bac6ee81b4",
+      measurementId:     "G-VHWNM66E9Q"
+    };
 
-            document.querySelectorAll('.prayer-card').forEach(card => card.classList.remove('active-prayer'));
+    const app  = initializeApp(firebaseConfig);
+    const db   = getFirestore(app);
+    const auth = getAuth(app);
 
-            const schedule = [
-                { id: 'card-fajr', time: timeToMinutes(timings.Fajr) },
-                { id: 'card-dhuhr', time: timeToMinutes(timings.Dhuhr) },
-                { id: 'card-asr', time: timeToMinutes(timings.Asr) },
-                { id: 'card-maghrib', time: timeToMinutes(timings.Maghrib) },
-                { id: 'card-isha', time: timeToMinutes(timings.Isha) }
-            ];
+    // ── Helpers ──────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const chatSvg = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/></svg>`;
 
-            let nextPrayerId = 'card-fajr'; // Если Иша прошел, следующий — завтрашний Фаджр
+    function toast(msg, ms = 2600){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), ms);
+    }
 
-            for (let i = 0; i < schedule.length; i++) {
-                if (currentMinutes < schedule[i].time) {
-                    nextPrayerId = schedule[i].id;
-                    break;
-                }
+    function show(screen){
+      ["screenClient","screenLogin","screenAdmin"].forEach(s => {
+        $(s).style.display = "none";
+      });
+      $(screen).style.display = "block";
+    }
+
+    // ── Lightbox 3D ──────────────────────────────────────────
+    function openLB(src){
+      $("lbImg").src = "";
+      $("lb").classList.add("open");
+      setTimeout(() => { $("lbImg").src = src; }, 40);
+    }
+    function closeLB(){
+      $("lb").classList.remove("open");
+      setTimeout(() => { $("lbImg").src = ""; }, 500);
+    }
+    $("lb").addEventListener("click", closeLB);
+    $("lbClose").addEventListener("click", e => { e.stopPropagation(); closeLB(); });
+    $("lbImg").addEventListener("click", e => e.stopPropagation());
+
+    // ── Сжатие фото ──────────────────────────────────────────
+    function compressImage(file, maxPx = 900, quality = 0.75){
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width, h = img.height;
+            if (w > maxPx || h > maxPx){
+              if (w > h){ h = Math.round(h * maxPx / w); w = maxPx; }
+              else      { w = Math.round(w * maxPx / h); h = maxPx; }
             }
+            const c = document.createElement("canvas");
+            c.width = w; c.height = h;
+            c.getContext("2d").drawImage(img, 0, 0, w, h);
+            resolve(c.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+          img.src = r.result;
+        };
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
 
-            document.getElementById(nextPrayerId).classList.add('active-prayer');
+    $("pimg").addEventListener("change", async () => {
+      const f = $("pimg").files?.[0];
+      if (!f){ $("prev").style.display = "none"; return; }
+      const b64 = await compressImage(f, 900, 0.78);
+      $("prev").src = b64;
+      $("prev").style.display = "block";
+    });
+
+    // ── Firestore CRUD ────────────────────────────────────────
+    const productsCol = collection(db, "products");
+
+    async function loadProducts(){
+      $("grid").innerHTML = `<div class="loader"><span class="spin"></span><br>Загрузка...</div>`;
+      try{
+        const snap = await getDocs(query(productsCol, orderBy("createdAt","desc")));
+        renderGrid(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      }catch(e){
+        $("grid").innerHTML = `<div class="loader">Ошибка: ${e.message}</div>`;
+      }
+    }
+
+    function renderGrid(items){
+      if (!items.length){
+        $("grid").innerHTML = `<div class="loader">Пока нет товаров</div>`;
+        return;
+      }
+      $("grid").innerHTML = items.map(p => {
+        const img  = p.image || "https://via.placeholder.com/600x600?text=No+Photo";
+        const link = p.link  || "#";
+        const name = (p.title || "").replaceAll("<","&lt;");
+        const desc = (p.desc  || "").replaceAll("<","&lt;");
+        return `
+          <div class="card">
+            <img class="img" src="${img}" alt="Фото" loading="lazy" data-img="${img}">
+            <div class="body">
+              <div class="name">${name}</div>
+              <div class="desc">${desc}</div>
+              <a class="btn" target="_blank" href="${link}">${chatSvg} Написать</a>
+            </div>
+          </div>`;
+      }).join("");
+      $("grid").querySelectorAll("[data-img]").forEach(el => {
+        el.addEventListener("click", () => openLB(el.getAttribute("data-img")));
+      });
+    }
+
+    // ── Admin list ────────────────────────────────────────────
+    let adminCache = [];
+
+    async function loadAdminList(){
+      $("alist").innerHTML = `<div class="loader"><span class="spin"></span><br>Загрузка...</div>`;
+      try{
+        const snap = await getDocs(query(productsCol, orderBy("createdAt","desc")));
+        adminCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAdmin(adminCache);
+      }catch(e){
+        $("alist").innerHTML = `<div class="loader">Ошибка: ${e.message}</div>`;
+      }
+    }
+
+    function renderAdmin(items){
+      if (!items.length){
+        $("alist").innerHTML = `<div class="loader">Пока нет товаров</div>`;
+        return;
+      }
+      $("alist").innerHTML = items.map(p => {
+        const img  = p.image || "https://via.placeholder.com/200x200?text=No+Photo";
+        const nm   = (p.title || "").replaceAll("<","&lt;");
+        const meta = (p.desc  || "").slice(0,60).replaceAll("<","&lt;");
+        return `
+          <div class="aItem">
+            <img src="${img}" alt="">
+            <div class="aInfo">
+              <div class="aName">${nm}</div>
+              <div class="aMeta">${meta}</div>
+            </div>
+            <div class="aAct">
+              <button class="iconBtn edit" data-edit="${p.id}">✏️</button>
+              <button class="iconBtn del"  data-del="${p.id}">🗑️</button>
+            </div>
+          </div>`;
+      }).join("");
+      $("alist").querySelectorAll("[data-edit]").forEach(b =>
+        b.addEventListener("click", () => startEdit(b.getAttribute("data-edit")))
+      );
+      $("alist").querySelectorAll("[data-del]").forEach(b =>
+        b.addEventListener("click", () => doDelete(b.getAttribute("data-del")))
+      );
+    }
+
+    // ── Admin form ────────────────────────────────────────────
+    function openForm(){
+      $("panel").style.display   = "block";
+      $("formTitle").textContent = "Новый товар";
+      $("pid").value = $("ptitle").value = $("pdesc").value = $("plink").value = $("pimg").value = "";
+      $("prev").style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function closeForm(){ $("panel").style.display = "none"; }
+
+    async function startEdit(id){
+      const p = adminCache.find(x => x.id === id);
+      if (!p) return;
+      $("panel").style.display   = "block";
+      $("formTitle").textContent = "Редактирование";
+      $("pid").value    = p.id;
+      $("ptitle").value = p.title || "";
+      $("pdesc").value  = p.desc  || "";
+      $("plink").value  = p.link  || "";
+      $("pimg").value   = "";
+      if (p.image){ $("prev").src = p.image; $("prev").style.display = "block"; }
+      else { $("prev").style.display = "none"; }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function saveProduct(){
+      const id    = $("pid").value;
+      const title = $("ptitle").value.trim();
+      const desc  = $("pdesc").value.trim();
+      const link  = $("plink").value.trim() || "#";
+      if (!title) return toast("Введите название");
+
+      let image = null;
+      const f = $("pimg").files?.[0];
+      if (f){ toast("Сжимаю фото..."); image = await compressImage(f, 900, 0.78); }
+
+      try{
+        if (!id){
+          toast("Сохраняю...");
+          await addDoc(productsCol, {
+            title, desc, link,
+            image: image || "",
+            createdAt: Date.now()
+          });
+          toast("✅ Товар добавлен!");
+        }else{
+          toast("Обновляю...");
+          const payload = { title, desc, link };
+          if (image) payload.image = image;
+          await updateDoc(doc(db, "products", id), payload);
+          toast("✅ Обновлено!");
         }
+        closeForm();
+        await loadAdminList();
+        await loadProducts();
+      }catch(e){
+        toast("Ошибка: " + e.message, 4000);
+      }
+    }
 
-        async function fetchPrayerTimes(lat, lng) {
-            const date = new Date();
-            const loader = document.getElementById('loader');
-            const grid = document.querySelector('.prayers-grid');
-            
-            loader.style.display = 'block';
-            grid.style.opacity = '0.3';
+    async function doDelete(id){
+      if (!confirm("Удалить товар?")) return;
+      try{
+        await deleteDoc(doc(db, "products", id));
+        toast("🗑️ Удалено");
+        await loadAdminList();
+        await loadProducts();
+      }catch(e){
+        toast("Ошибка: " + e.message, 4000);
+      }
+    }
 
-            // method=14 : Spiritual Administration of Muslims of Russia (ДУМ РФ)
-            // school=0 : Shafi (Стандарт для Ингушетии в рамках API)
-            const url = `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${lat}&longitude=${lng}&method=14&school=0`;
+    // ── Auth ──────────────────────────────────────────────────
+    // "Lider001@" маппится в технический email для Firebase Auth
+    // Пароль "Lider002@" вводится напрямую
+    function mapLogin(login){
+      if (login === "Lider001@") return "lider001@detskaya-odejda.admin";
+      return login;
+    }
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const timings = data.data.timings;
+    async function doLogin(){
+      const login = $("login").value.trim();
+      const pass  = $("pass").value.trim();
+      if (!login || !pass) return toast("Введите логин и пароль");
+      toast("⏳ Проверка...");
+      try{
+        await signInWithEmailAndPassword(auth, mapLogin(login), pass);
+      }catch(e){
+        toast("❌ Неверный логин или пароль", 3500);
+      }
+    }
 
-                document.getElementById('fajr-time').textContent = timings.Fajr;
-                document.getElementById('dhuhr-time').textContent = timings.Dhuhr;
-                document.getElementById('asr-time').textContent = timings.Asr;
-                document.getElementById('maghrib-time').textContent = timings.Maghrib;
-                document.getElementById('isha-time').textContent = timings.Isha;
+    async function doLogout(){
+      await signOut(auth);
+      toast("Вы вышли");
+    }
 
-                highlightNextPrayer(timings);
-            } catch (error) {
-                console.error('Ошибка API:', error);
-                document.getElementById('current-date').textContent = "Сбой соединения с сервером";
-            } finally {
-                loader.style.display = 'none';
-                grid.style.opacity = '1';
-            }
-        }
+    // ── UI bindings ───────────────────────────────────────────
+    $("gear").addEventListener        ("click", () => show("screenLogin"));
+    $("btnLogin").addEventListener    ("click", doLogin);
+    $("btnCancel").addEventListener   ("click", () => show("screenClient"));
+    $("btnOpenForm").addEventListener ("click", openForm);
+    $("btnCloseForm").addEventListener("click", closeForm);
+    $("btnSave").addEventListener     ("click", saveProduct);
+    $("btnLogout").addEventListener   ("click", doLogout);
 
-        function changeLocation() {
-            const select = document.getElementById('city-select');
-            const [lat, lng] = select.value.split(',');
-            fetchPrayerTimes(lat, lng);
-        }
+    // Enter в полях логина
+    [$("login"), $("pass")].forEach(el =>
+      el.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); })
+    );
 
-        // Запуск
-        setDate();
-        changeLocation(); 
-        
-        // Автообновление расписания и подсветки каждую минуту
-        setInterval(() => {
-            setDate();
-            changeLocation();
-        }, 60000); 
+    // ── Auth state ────────────────────────────────────────────
+    onAuthStateChanged(auth, async user => {
+      if (user){
+        show("screenAdmin");
+        await loadAdminList();
+      }else{
+        show("screenClient");
+        await loadProducts();
+      }
+    });
 
+    // ── PWA ───────────────────────────────────────────────────
+    const manifest = {
+      name:"Детская Одежда", short_name:"Одежда",
+      start_url:"./", display:"standalone",
+      background_color:"#fdf1f4", theme_color:"#e97a95",
+      icons:[{
+        src:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2U5N2E5NSIvPjwvc3ZnPg==",
+        sizes:"192x192", type:"image/svg+xml"
+      }]
+    };
+    const mLink = document.createElement("link");
+    mLink.rel  = "manifest";
+    mLink.href = URL.createObjectURL(
+      new Blob([JSON.stringify(manifest)], { type:"application/json" })
+    );
+    document.head.appendChild(mLink);
 
-        /* =========================================
-           ЧАСТЬ 2: 3D ПОЛУМЕСЯЦ И ЗВЕЗДА (DELUXE)
-        ========================================= */
-        const container = document.getElementById('canvas-container');
-
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050814, 0.015);
-
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1400);
-        camera.position.set(0, 2.0, 56);
-
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.outputEncoding = THREE.sRGBEncoding;
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.15;
-        container.appendChild(renderer.domElement);
-
-        /* --- Свет --- */
-        scene.add(new THREE.AmbientLight(0xffffff, 0.2));
-
-        const keyLight = new THREE.PointLight(0xffd7a3, 100, 250); 
-        keyLight.position.set(26, 30, 44);
-        scene.add(keyLight);
-
-        const rimLight = new THREE.PointLight(0x5bffe7, 60, 250);
-        rimLight.position.set(-34, -10, 30);
-        scene.add(rimLight);
-
-        const topFill = new THREE.DirectionalLight(0xffffff, 0.3);
-        topFill.position.set(-8, 20, 15);
-        scene.add(topFill);
-
-        /* --- Группа для параллакса --- */
-        const symbolGroup = new THREE.Group();
-        scene.add(symbolGroup);
-
-        /* Вспомогательное: спрайтовый ореол (Halo) */
-        function makeHaloSprite(color1, color2, size, opacity) {
-            const c = document.createElement('canvas');
-            c.width = 256; c.height = 256;
-            const ctx = c.getContext('2d');
-
-            const grd = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-            grd.addColorStop(0.00, color1);
-            grd.addColorStop(0.35, color2);
-            grd.addColorStop(1.00, 'rgba(0,0,0,0)');
-
-            ctx.fillStyle = grd;
-            ctx.fillRect(0, 0, 256, 256);
-
-            const tex = new THREE.CanvasTexture(c);
-            const mat = new THREE.SpriteMaterial({
-                map: tex, transparent: true, opacity: opacity,
-                depthWrite: false, blending: THREE.AdditiveBlending
-            });
-
-            const spr = new THREE.Sprite(mat);
-            spr.scale.set(size, size, 1);
-            return spr;
-        }
-
-        /* --- Полумесяц --- */
-        function createCrescent() {
-            const shape = new THREE.Shape();
-            shape.absarc(0, 0, 15.0, 0, Math.PI * 2, false);
-
-            const hole = new THREE.Path();
-            hole.absarc(5.6, 0, 12.0, 0, Math.PI * 2, true); // Сдвиг для формы полумесяца
-            shape.holes.push(hole);
-
-            const geo = new THREE.ExtrudeGeometry(shape, {
-                depth: 2.8, bevelEnabled: true,
-                bevelThickness: 1.0, bevelSize: 0.85,
-                bevelSegments: 10, curveSegments: 96
-            });
-            geo.center();
-
-            // Материал: Золото
-            const gold = new THREE.MeshPhysicalMaterial({
-                color: 0xffd06a, metalness: 1.0, roughness: 0.18,
-                clearcoat: 1.0, clearcoatRoughness: 0.10,
-                emissive: 0x1c0f00, emissiveIntensity: 0.22
-            });
-
-            // Материал: Изумрудная эмаль (тонкий слой поверх)
-            const enamel = new THREE.MeshPhysicalMaterial({
-                color: 0x0b3a2d, metalness: 0.35, roughness: 0.22,
-                clearcoat: 1.0, clearcoatRoughness: 0.08,
-                transparent: true, opacity: 0.15, depthWrite: false
-            });
-
-            const meshGold = new THREE.Mesh(geo, gold);
-            meshGold.rotation.set(-0.18, 0.30, 0.58);
-            meshGold.position.set(0, 0, -8);
-
-            const meshEnamel = new THREE.Mesh(geo.clone(), enamel);
-            meshEnamel.rotation.copy(meshGold.rotation);
-            meshEnamel.position.copy(meshGold.position);
-            meshEnamel.scale.setScalar(1.001);
-
-            // Свечение по контуру
-            const edgeGlow = new THREE.Mesh(
-                geo.clone(),
-                new THREE.MeshBasicMaterial({
-                    color: 0x00ffbf, transparent: true, opacity: 0.10,
-                    blending: THREE.AdditiveBlending, depthWrite: false
-                })
-            );
-            edgeGlow.rotation.copy(meshGold.rotation);
-            edgeGlow.position.copy(meshGold.position);
-            edgeGlow.scale.setScalar(1.035);
-
-            // Ореол позади
-            const halo = makeHaloSprite('rgba(0,255,190,0.35)', 'rgba(255,208,106,0.10)', 120, 0.55);
-            halo.position.set(0, 0, -18);
-
-            const g = new THREE.Group();
-            g.add(halo); g.add(edgeGlow); g.add(meshGold); g.add(meshEnamel);
-            return { g, edgeGlow, halo };
-        }
-
-        /* --- Звезда --- */
-        function createStar() {
-            const starShape = new THREE.Shape();
-            const spikes = 5, outer = 3.1, inner = 1.35;
-            let rot = Math.PI / 2 * 3;
-            const step = Math.PI / spikes;
-
-            starShape.moveTo(0, -outer);
-            for (let i = 0; i < spikes; i++) {
-                starShape.lineTo(Math.cos(rot) * outer, Math.sin(rot) * outer);
-                rot += step;
-                starShape.lineTo(Math.cos(rot) * inner, Math.sin(rot) * inner);
-                rot += step;
-            }
-            starShape.closePath();
-
-            const geo = new THREE.ExtrudeGeometry(starShape, {
-                depth: 1.6, bevelEnabled: true,
-                bevelThickness: 0.55, bevelSize: 0.35,
-                bevelSegments: 8, curveSegments: 48
-            });
-            geo.center();
-
-            const mat = new THREE.MeshPhysicalMaterial({
-                color: 0xfff0b0, metalness: 1.0, roughness: 0.22,
-                clearcoat: 1.0, clearcoatRoughness: 0.12,
-                emissive: 0x2a2100, emissiveIntensity: 0.20
-            });
-
-            const mesh = new THREE.Mesh(geo, mat);
-            // Размещение внутри выреза полумесяца
-            mesh.position.set(9.2, 5.3, -5.6);
-            mesh.rotation.set(0.25, -0.25, 0.15);
-
-            const halo = makeHaloSprite('rgba(255,240,176,0.55)', 'rgba(255,208,106,0.12)', 44, 0.70);
-            halo.position.copy(mesh.position);
-            halo.position.z -= 6.0;
-
-            const glow = new THREE.Mesh(
-                geo.clone(),
-                new THREE.MeshBasicMaterial({
-                    color: 0xffd06a, transparent: true, opacity: 0.10,
-                    blending: THREE.AdditiveBlending, depthWrite: false
-                })
-            );
-            glow.position.copy(mesh.position);
-            glow.rotation.copy(mesh.rotation);
-            glow.scale.setScalar(1.08);
-
-            const g = new THREE.Group();
-            g.add(halo); g.add(glow); g.add(mesh);
-            return { g, mesh, halo };
-        }
-
-        /* --- Звездный фон и искры --- */
-        function createParticles(count, size, isSparkle) {
-            const geo = new THREE.BufferGeometry();
-            const pos = new Float32Array(count * 3);
-            const col = new Float32Array(count * 3);
-
-            for (let i = 0; i < count; i++) {
-                const i3 = i * 3;
-                if (isSparkle) {
-                    // Искры кучкуются вокруг символа
-                    const r = Math.pow(Math.random(), 0.55) * 55;
-                    const a = Math.random() * Math.PI * 2;
-                    pos[i3] = Math.cos(a) * r;
-                    pos[i3 + 1] = (Math.random() - 0.5) * 40;
-                    pos[i3 + 2] = Math.sin(a) * r - 30;
-                } else {
-                    // Звезды по всему фону
-                    pos[i3] = (Math.random() - 0.5) * 260;
-                    pos[i3 + 1] = (Math.random() - 0.5) * 260;
-                    pos[i3 + 2] = (Math.random() - 0.5) * 160 - 80;
-                }
-
-                const t = Math.random();
-                if (t > 0.8) { col[i3]=0.3; col[i3+1]=1.0; col[i3+2]=0.85; } // Изумруд
-                else if (t > 0.5) { col[i3]=1.0; col[i3+1]=0.86; col[i3+2]=0.45; } // Золото
-                else { col[i3]=1.0; col[i3+1]=1.0; col[i3+2]=1.0; } // Белый
-            }
-
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-
-            const mat = new THREE.PointsMaterial({
-                size: size, vertexColors: true, transparent: true,
-                opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false
-            });
-
-            return new THREE.Points(geo, mat);
-        }
-
-        // Добавляем объекты на сцену
-        const objCrescent = createCrescent();
-        const objStar = createStar();
-        symbolGroup.add(objCrescent.g);
-        symbolGroup.add(objStar.g);
-
-        const sparkles = createParticles(900, 0.55, true);
-        const farStars = createParticles(1600, 0.45, false);
-        scene.add(sparkles);
-        scene.add(farStars);
-
-        /* --- Параллакс и Анимация --- */
-        let mx = 0, my = 0;
-        document.addEventListener('mousemove', (e) => {
-            mx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-            my = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+    if ("serviceWorker" in navigator){
+      const sw = `
+        self.addEventListener('install',  () => self.skipWaiting());
+        self.addEventListener('activate', () => self.clients.claim());
+        self.addEventListener('fetch', e => {
+          e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
         });
-
-        const clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const t = clock.getElapsedTime();
-
-            // Плавное вращение группы (полумесяц + звезда)
-            symbolGroup.rotation.y = 0.25 + Math.sin(t * 0.18) * 0.06;
-            symbolGroup.rotation.x = -0.05 + Math.sin(t * 0.22) * 0.05;
-
-            // Реакция на мышь
-            symbolGroup.rotation.y += (mx * 0.18 - symbolGroup.rotation.y) * 0.03;
-            symbolGroup.rotation.x += (-my * 0.12 - symbolGroup.rotation.x) * 0.03;
-
-            // Мерцание
-            objCrescent.edgeGlow.material.opacity = 0.085 + Math.sin(t * 1.4) * 0.018;
-            objCrescent.halo.material.opacity = 0.50 + Math.sin(t * 0.8) * 0.08;
-            objStar.halo.material.opacity = 0.62 + Math.sin(t * 1.1) * 0.10;
-
-            // Вращение звезды
-            objStar.mesh.rotation.z += 0.0032;
-
-            // Движение частиц
-            farStars.rotation.y = t * 0.02;
-            farStars.rotation.x = t * 0.01;
-            sparkles.rotation.y = -t * 0.035;
-
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+      `;
+      window.addEventListener("load", () =>
+        navigator.serviceWorker.register(
+          URL.createObjectURL(new Blob([sw], { type:"application/javascript" }))
+        ).catch(() => {})
+      );
+    }
+  </script>
 </body>
 </html>
+
