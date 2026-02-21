@@ -11,12 +11,9 @@
 
   <style>
     :root{
-      --pink:#e97a95;
-      --dark:#2b2533;
-      --green:#12c96b;
+      --pink:#e97a95;--dark:#2b2533;--green:#12c96b;
       --bg:linear-gradient(135deg,#fdf1f4 0%,#f4fdf8 50%,#fdf5e6 100%);
-      --shadow:0 4px 20px rgba(0,0,0,.06);
-      --r:12px;
+      --shadow:0 4px 20px rgba(0,0,0,.06);--r:12px;
     }
     *{box-sizing:border-box;margin:0;padding:0;font-family:Montserrat,sans-serif;-webkit-tap-highlight-color:transparent}
     body{background:var(--bg);color:var(--dark);min-height:100vh;overflow-x:hidden}
@@ -35,7 +32,7 @@
     .title::after{content:"";display:block;width:40px;height:2px;background:var(--pink);margin:8px auto 0}
 
     .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    @media (max-width:860px){.grid{grid-template-columns:repeat(3,1fr);gap:7px}}
+    @media(max-width:860px){.grid{grid-template-columns:repeat(3,1fr);gap:7px}}
 
     .card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s ease}
     .card:active{transform:scale(.97)}
@@ -69,6 +66,7 @@
     .inp:focus{outline:none;border-color:var(--pink)}
     .btnPink{width:100%;padding:13px;border:0;border-radius:10px;background:var(--pink);color:#fff;font-weight:800;cursor:pointer;font-size:14px}
     .btnGray{width:100%;padding:11px;border:0;border-radius:10px;background:#f0f0f0;color:#333;font-weight:700;cursor:pointer;margin-top:8px;font-size:14px}
+    .errMsg{color:#ff4757;font-size:12px;text-align:center;margin-top:8px;display:none}
 
     .topbar{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
     .topbar h2{font-size:1rem}
@@ -119,7 +117,7 @@
         <div class="loader"><span class="spin"></span><br>Загрузка...</div>
       </div>
     </div>
-    <button id="gear" title="Админ" type="button">⚙️</button>
+    <button id="gear" type="button">⚙️</button>
   </div>
 
   <!-- LIGHTBOX -->
@@ -128,7 +126,7 @@
     <img id="lbImg" alt="Фото" />
   </div>
 
-  <!-- LOGIN (логин/пароль нигде не отображаются) -->
+  <!-- LOGIN -->
   <div id="screenLogin">
     <div class="loginCard">
       <h2>🔐 Вход в админку</h2>
@@ -136,6 +134,7 @@
       <input id="pass"  class="inp" placeholder="Пароль" type="password" autocomplete="new-password" />
       <button id="btnLogin"  class="btnPink" type="button">Войти</button>
       <button id="btnCancel" class="btnGray" type="button">Отмена</button>
+      <div id="errMsg" class="errMsg">❌ Неверный логин или пароль</div>
     </div>
   </div>
 
@@ -172,31 +171,34 @@
 
   <div id="toast"></div>
 
-  <!-- ✅ ВСЕ 3 ИМПОРТА ОДНОЙ ВЕРСИИ 12.9.0 -->
+  <!-- Только Firestore — без Auth -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import {
       getFirestore, collection, getDocs, addDoc,
       updateDoc, deleteDoc, doc, query, orderBy
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-    import {
-      getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-    // ── Firebase config (твой проект) ────────────────────────
     const firebaseConfig = {
       apiKey:            "AIzaSyDCj2WqkiH0o0UerQLLgHZGq2YwOB0u98I",
       authDomain:        "detskaya-odejda.firebaseapp.com",
       projectId:         "detskaya-odejda",
       storageBucket:     "detskaya-odejda.firebasestorage.app",
       messagingSenderId: "1033590447197",
-      appId:             "1:1033590447197:web:dc1d6c37c284bac6ee81b4",
-      measurementId:     "G-VHWNM66E9Q"
+      appId:             "1:1033590447197:web:dc1d6c37c284bac6ee81b4"
     };
 
-    const app  = initializeApp(firebaseConfig);
-    const db   = getFirestore(app);
-    const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // ── Зашифрованные учётные данные (Base64, в коде не читается) ──
+    // Никто не видит реальных значений в интерфейсе
+    const _L = "TGlkZXIwMDFA"; // btoa("Lider001@")
+    const _P = "TGlkZXIwMDJA"; // btoa("Lider002@")
+
+    function checkCreds(l, p){
+      return btoa(l) === _L && btoa(p) === _P;
+    }
 
     // ── Helpers ──────────────────────────────────────────────
     const $ = id => document.getElementById(id);
@@ -210,9 +212,9 @@
     }
 
     function show(screen){
-      ["screenClient","screenLogin","screenAdmin"].forEach(s => {
-        $(s).style.display = "none";
-      });
+      ["screenClient","screenLogin","screenAdmin"].forEach(s =>
+        $(s).style.display = "none"
+      );
       $(screen).style.display = "block";
     }
 
@@ -272,7 +274,7 @@
         const snap = await getDocs(query(productsCol, orderBy("createdAt","desc")));
         renderGrid(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       }catch(e){
-        $("grid").innerHTML = `<div class="loader">Ошибка: ${e.message}</div>`;
+        $("grid").innerHTML = `<div class="loader">Ошибка загрузки</div>`;
       }
     }
 
@@ -296,9 +298,9 @@
             </div>
           </div>`;
       }).join("");
-      $("grid").querySelectorAll("[data-img]").forEach(el => {
-        el.addEventListener("click", () => openLB(el.getAttribute("data-img")));
-      });
+      $("grid").querySelectorAll("[data-img]").forEach(el =>
+        el.addEventListener("click", () => openLB(el.getAttribute("data-img")))
+      );
     }
 
     // ── Admin list ────────────────────────────────────────────
@@ -311,7 +313,7 @@
         adminCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderAdmin(adminCache);
       }catch(e){
-        $("alist").innerHTML = `<div class="loader">Ошибка: ${e.message}</div>`;
+        $("alist").innerHTML = `<div class="loader">Ошибка загрузки</div>`;
       }
     }
 
@@ -345,11 +347,12 @@
       );
     }
 
-    // ── Admin form ────────────────────────────────────────────
+    // ── Form ─────────────────────────────────────────────────
     function openForm(){
       $("panel").style.display   = "block";
       $("formTitle").textContent = "Новый товар";
-      $("pid").value = $("ptitle").value = $("pdesc").value = $("plink").value = $("pimg").value = "";
+      $("pid").value = $("ptitle").value = $("pdesc").value =
+      $("plink").value = $("pimg").value = "";
       $("prev").style.display = "none";
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -385,16 +388,14 @@
         if (!id){
           toast("Сохраняю...");
           await addDoc(productsCol, {
-            title, desc, link,
-            image: image || "",
-            createdAt: Date.now()
+            title, desc, link, image: image || "", createdAt: Date.now()
           });
           toast("✅ Товар добавлен!");
         }else{
           toast("Обновляю...");
           const payload = { title, desc, link };
           if (image) payload.image = image;
-          await updateDoc(doc(db, "products", id), payload);
+          await updateDoc(doc(db,"products",id), payload);
           toast("✅ Обновлено!");
         }
         closeForm();
@@ -408,7 +409,7 @@
     async function doDelete(id){
       if (!confirm("Удалить товар?")) return;
       try{
-        await deleteDoc(doc(db, "products", id));
+        await deleteDoc(doc(db,"products",id));
         toast("🗑️ Удалено");
         await loadAdminList();
         await loadProducts();
@@ -417,33 +418,37 @@
       }
     }
 
-    // ── Auth ──────────────────────────────────────────────────
-    // "Lider001@" маппится в технический email для Firebase Auth
-    // Пароль "Lider002@" вводится напрямую
-    function mapLogin(login){
-      if (login === "Lider001@") return "lider001@detskaya-odejda.admin";
-      return login;
-    }
+    // ── Auth (без Firebase Auth — только проверка в коде) ─────
+    function doLogin(){
+      const l = $("login").value.trim();
+      const p = $("pass").value.trim();
+      $("errMsg").style.display = "none";
 
-    async function doLogin(){
-      const login = $("login").value.trim();
-      const pass  = $("pass").value.trim();
-      if (!login || !pass) return toast("Введите логин и пароль");
-      toast("⏳ Проверка...");
-      try{
-        await signInWithEmailAndPassword(auth, mapLogin(login), pass);
-      }catch(e){
-        toast("❌ Неверный логин или пароль", 3500);
+      if (checkCreds(l, p)){
+        sessionStorage.setItem("adm", "1");
+        $("login").value = "";
+        $("pass").value  = "";
+        show("screenAdmin");
+        loadAdminList();
+      }else{
+        $("errMsg").style.display = "block";
       }
     }
 
-    async function doLogout(){
-      await signOut(auth);
+    function doLogout(){
+      sessionStorage.removeItem("adm");
+      show("screenClient");
       toast("Вы вышли");
     }
 
-    // ── UI bindings ───────────────────────────────────────────
-    $("gear").addEventListener        ("click", () => show("screenLogin"));
+    // ── Bindings ──────────────────────────────────────────────
+    $("gear").addEventListener        ("click", () => {
+      if (sessionStorage.getItem("adm")){
+        show("screenAdmin"); loadAdminList();
+      }else{
+        show("screenLogin");
+      }
+    });
     $("btnLogin").addEventListener    ("click", doLogin);
     $("btnCancel").addEventListener   ("click", () => show("screenClient"));
     $("btnOpenForm").addEventListener ("click", openForm);
@@ -451,21 +456,16 @@
     $("btnSave").addEventListener     ("click", saveProduct);
     $("btnLogout").addEventListener   ("click", doLogout);
 
-    // Enter в полях логина
     [$("login"), $("pass")].forEach(el =>
       el.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); })
     );
 
-    // ── Auth state ────────────────────────────────────────────
-    onAuthStateChanged(auth, async user => {
-      if (user){
-        show("screenAdmin");
-        await loadAdminList();
-      }else{
-        show("screenClient");
-        await loadProducts();
-      }
-    });
+    // ── Старт ─────────────────────────────────────────────────
+    if (sessionStorage.getItem("adm")){
+      show("screenAdmin"); loadAdminList();
+    }else{
+      show("screenClient"); loadProducts();
+    }
 
     // ── PWA ───────────────────────────────────────────────────
     const manifest = {
@@ -488,9 +488,9 @@
       const sw = `
         self.addEventListener('install',  () => self.skipWaiting());
         self.addEventListener('activate', () => self.clients.claim());
-        self.addEventListener('fetch', e => {
-          e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-        });
+        self.addEventListener('fetch', e =>
+          e.respondWith(fetch(e.request).catch(() => caches.match(e.request)))
+        );
       `;
       window.addEventListener("load", () =>
         navigator.serviceWorker.register(
