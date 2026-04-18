@@ -1,459 +1,702 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <meta name="theme-color" content="#e97a95" />
-  <title>Детская Одежда</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--pink:#e97a95;--dark:#2b2533;--green:#12c96b;--bg:linear-gradient(135deg,#fdf1f4 0%,#f4fdf8 50%,#fdf5e6 100%);--shadow:0 4px 20px rgba(0,0,0,.06);--r:12px}
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Montserrat,sans-serif;-webkit-tap-highlight-color:transparent}
-    body{background:var(--bg);color:var(--dark);min-height:100vh;overflow-x:hidden}
-    .hero{padding:52px 14px 18px;text-align:center;position:relative;overflow:hidden}
-    .hero::before,.hero::after{content:"";position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(253,224,233,.25))}
-    .hero::before{width:220px;height:220px;left:-70px;top:-70px}
-    .hero::after{width:160px;height:160px;right:-50px;bottom:-50px}
-    .hero h1{font-size:clamp(2rem,9vw,4rem);line-height:1.08;margin-bottom:8px}
-    .hero .pink{color:var(--pink);font-weight:600}
-    .hero .dark{color:var(--dark);font-weight:800}
-    .hero p{color:#888;font-size:clamp(11px,3.5vw,14px)}
-    .wrap{max-width:1200px;margin:0 auto;padding:10px 10px 84px}
-    .title{text-align:center;font-size:clamp(1.05rem,4vw,1.55rem);font-weight:500;margin:10px 0 18px}
-    .title::after{content:"";display:block;width:40px;height:2px;background:var(--pink);margin:8px auto 0}
-    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    @media(max-width:860px){.grid{grid-template-columns:repeat(3,1fr);gap:7px}}
-    .card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .2s ease}
-    .card:active{transform:scale(.97)}
-    .img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;cursor:zoom-in}
-    .body{padding:clamp(7px,2vw,12px);display:flex;flex-direction:column;gap:6px;flex:1}
-    .name{font-size:clamp(10px,2.7vw,14px);font-weight:800;line-height:1.2}
-    .desc{font-size:clamp(9px,2.2vw,12px);color:#666;line-height:1.3;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .btn{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--green);color:#fff;text-decoration:none;border:0;border-radius:18px;padding:clamp(6px,2vw,10px);font-weight:800;font-size:clamp(9px,2vw,12px)}
-    .btn svg{width:13px;height:13px;fill:currentColor}
-    #lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:none;align-items:center;justify-content:center;perspective:1200px;padding:20px}
-    #lb.open{display:flex}
-    #lbClose{position:absolute;top:12px;right:18px;color:#fff;font-size:40px;line-height:1;cursor:pointer}
-    #lbImg{max-width:93vw;max-height:86vh;border-radius:16px;box-shadow:0 40px 80px rgba(0,0,0,.7);cursor:zoom-out;opacity:0;transform:rotateX(70deg) scale(.3) translateY(80px);transition:transform .55s cubic-bezier(.175,.885,.32,1.275),opacity .4s ease}
-    #lb.open #lbImg{opacity:1;transform:rotateX(0) scale(1) translateY(0)}
-    #gear{position:fixed;left:18px;bottom:18px;width:46px;height:46px;border-radius:50%;border:0;background:rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:100;font-size:22px;transition:.3s}
-    #gear:hover{background:var(--pink);transform:rotate(90deg)}
-    #screenClient{display:block}
-    #screenLogin{display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px}
-    #screenAdmin{display:none;min-height:100vh;background:#f5f5f5;padding:12px}
-    .loginCard{width:100%;max-width:360px;background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.08);padding:34px 28px}
-    .loginCard h2{text-align:center;margin-bottom:18px;font-size:1.2rem}
-    .inp{width:100%;padding:12px 14px;border:1.5px solid #eee;border-radius:10px;margin-bottom:10px;font-size:14px}
-    .inp:focus{outline:none;border-color:var(--pink)}
-    .btnPink{width:100%;padding:13px;border:0;border-radius:10px;background:var(--pink);color:#fff;font-weight:800;cursor:pointer;font-size:14px}
-    .btnGray{width:100%;padding:11px;border:0;border-radius:10px;background:#f0f0f0;color:#333;font-weight:700;cursor:pointer;margin-top:8px;font-size:14px}
-    .errMsg{color:#ff4757;font-size:12px;text-align:center;margin-top:8px;display:none}
-    .topbar{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .topbar h2{font-size:1rem}
-    .row{display:flex;gap:8px}
-    .btnSm{padding:8px 12px;border:0;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer}
-    .btnSm.pink{background:var(--pink);color:#fff}
-    .btnSm.gray{background:#eee;color:#333}
-    .panel{display:none;background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
-    .panel h3{margin-bottom:12px;font-size:1rem}
-    .lab{font-size:10px;font-weight:900;color:#999;text-transform:uppercase;margin-bottom:4px;display:block}
-    textarea.inp{resize:none}
-    #prev{width:84px;height:84px;border-radius:10px;object-fit:cover;display:none;margin-top:8px}
-    .actions{display:flex;gap:8px;margin-top:12px}
-    .actions button{flex:1;padding:12px}
-    .aItem{background:#fff;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:9px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-    .aItem img{width:54px;height:54px;border-radius:8px;object-fit:cover}
-    .aInfo{flex:1;min-width:0}
-    .aName{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .aMeta{font-size:11px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .aAct{display:flex;gap:6px}
-    .iconBtn{border:0;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:900}
-    .iconBtn.edit{background:#eee}
-    .iconBtn.del{background:#ff4757;color:#fff}
-    #toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:#2b2533;color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;font-weight:600;z-index:10000;opacity:0;pointer-events:none;transition:opacity .25s ease;max-width:90vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    #toast.show{opacity:1}
-    .loader{grid-column:1/-1;text-align:center;padding:44px;color:var(--pink);font-weight:800}
-    .errBox{grid-column:1/-1;text-align:center;padding:24px;color:#ff4757;font-weight:700;font-size:13px;background:#fff5f5;border-radius:12px;margin:10px}
-    .spin{display:inline-block;width:28px;height:28px;border:3px solid rgba(233,122,149,.2);border-top-color:var(--pink);border-radius:50%;animation:rot .7s linear infinite;margin-bottom:8px}
-    @keyframes rot{to{transform:rotate(360deg)}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seda2026 - Видеозвонки</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    color: white;
+  }
+  .app { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  .header { text-align: center; padding: 20px; margin-bottom: 20px; }
+  .header h1 {
+    font-size: 3em;
+    background: linear-gradient(45deg, #00d4ff, #ff00ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  .lobby {
+    max-width: 500px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .my-id {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 16px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .my-id strong { color: #00d4ff; flex: 1; text-align: center; }
+  input {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px 0;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    outline: none;
+  }
+  input::placeholder { color: rgba(255,255,255,0.6); }
+  button {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #00d4ff, #0099cc);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+    margin: 5px 0;
+  }
+  button:hover:not(:disabled) { transform: scale(1.02); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .copy-btn {
+    background: linear-gradient(45deg, #764ba2, #667eea);
+    padding: 8px 15px;
+    font-size: 14px;
+    width: auto;
+    margin: 0;
+  }
+  .retry-btn {
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    margin-top: 10px;
+  }
+  .videos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .video-container {
+    position: relative;
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  video { width: 100%; height: 100%; object-fit: cover; }
+  .video-label {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 20px;
+    flex-wrap: wrap;
+  }
+  .control-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    padding: 0;
+    margin: 0;
+  }
+  .control-btn.off { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+  .control-btn.end { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+  .control-btn.screen { background: linear-gradient(45deg, #27ae60, #229954); }
+  .control-btn.screen.active { background: linear-gradient(45deg, #f39c12, #e67e22); }
+  .status {
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    font-weight: bold;
+  }
+  .status.connected { background: rgba(46, 204, 113, 0.3); }
+  .status.connecting { background: rgba(241, 196, 15, 0.3); }
+  .status.error { background: rgba(231, 76, 60, 0.3); }
+  .error {
+    background: rgba(231, 76, 60, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    border-left: 4px solid #e74c3c;
+  }
+  .info {
+    background: rgba(52, 152, 219, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .server-info {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    margin-top: 10px;
+  }
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
+<div id="root"></div>
 
-  <!-- CLIENT -->
-  <div id="screenClient">
-    <div class="hero">
-      <h1><span class="pink">Детская</span><br><span class="dark">Одежда</span></h1>
-      <p>Качественная и стильная одежда для ваших малышей ✨</p>
-    </div>
-    <div class="wrap">
-      <div class="title">Наши товары</div>
-      <div id="grid" class="grid">
-        <div class="loader"><span class="spin"></span><br>Загрузка...</div>
-      </div>
-    </div>
-    <button id="gear" type="button">⚙️</button>
-  </div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
 
-  <!-- LIGHTBOX -->
-  <div id="lb" role="dialog" aria-modal="true">
-    <div id="lbClose">&times;</div>
-    <img id="lbImg" alt="Фото" />
-  </div>
+// Список PeerJS серверов для fallback
+const PEER_SERVERS = [
+  { host: '0.peerjs.com', port: 443, path: '/', secure: true },
+  { /* default cloud */ },
+  { host: 'peerjs-server.herokuapp.com', port: 443, path: '/', secure: true }
+];
 
-  <!-- LOGIN -->
-  <div id="screenLogin">
-    <div class="loginCard">
-      <h2>🔐 Вход в админку</h2>
-      <input id="login" class="inp" placeholder="Логин" autocomplete="off" />
-      <input id="pass"  class="inp" placeholder="Пароль" type="password" autocomplete="new-password" />
-      <button id="btnLogin"  class="btnPink" type="button">Войти</button>
-      <button id="btnCancel" class="btnGray" type="button">Отмена</button>
-      <div id="errMsg" class="errMsg">❌ Неверный логин или пароль</div>
-    </div>
-  </div>
+const ICE_SERVERS = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun3.l.google.com:19302' },
+  { urls: 'stun:stun4.l.google.com:19302' },
+  { urls: 'stun:global.stun.twilio.com:3478' },
+  // Бесплатный TURN сервер (OpenRelay)
+  {
+    urls: 'turn:openrelay.metered.ca:80',
+    username: 'openrelayproject',
+    credential: 'openrelayproject'
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443',
+    username: 'openrelayproject',
+    credential: 'openrelayproject'
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+    username: 'openrelayproject',
+    credential: 'openrelayproject'
+  }
+];
 
-  <!-- ADMIN -->
-  <div id="screenAdmin">
-    <div class="topbar">
-      <h2>⚙️ Управление товарами</h2>
-      <div class="row">
-        <button id="btnOpenForm" class="btnSm pink" type="button">+ Добавить</button>
-        <button id="btnLogout"   class="btnSm gray" type="button">Выйти</button>
-      </div>
-    </div>
-    <div id="panel" class="panel">
-      <h3 id="formTitle">Новый товар</h3>
-      <input id="pid" type="hidden" />
-      <label class="lab">Название</label>
-      <input id="ptitle" class="inp" placeholder="Например: Носочки" />
-      <label class="lab">Описание</label>
-      <textarea id="pdesc" class="inp" rows="3" placeholder="Размер, состав, цена..."></textarea>
-      <label class="lab">Ссылка WhatsApp / Telegram</label>
-      <input id="plink" class="inp" placeholder="https://wa.me/..." />
-      <label class="lab">Фото</label>
-      <input id="pimg" class="inp" type="file" accept="image/*" />
-      <img id="prev" alt="preview" />
-      <div class="actions">
-        <button id="btnSave"      class="btnSm pink" type="button">💾 Сохранить</button>
-        <button id="btnCloseForm" class="btnSm gray" type="button">Отмена</button>
-      </div>
-    </div>
-    <div id="alist"></div>
-  </div>
+function generateShortId() {
+  const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+  let id = 'seda-';
+  for (let i = 0; i < 6; i++) {
+    id += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return id;
+}
 
-  <div id="toast"></div>
+function App() {
+  const [myId, setMyId] = useState('');
+  const [remoteId, setRemoteId] = useState('');
+  const [inCall, setInCall] = useState(false);
+  const [status, setStatus] = useState('connecting');
+  const [statusText, setStatusText] = useState('Подключение к серверу...');
+  const [error, setError] = useState('');
+  const [micOn, setMicOn] = useState(true);
+  const [camOn, setCamOn] = useState(true);
+  const [screenSharing, setScreenSharing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [serverAttempt, setServerAttempt] = useState(0);
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import {
-      getFirestore, collection, getDocs, addDoc,
-      updateDoc, deleteDoc, doc
-    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+  const peerRef = useRef(null);
+  const localStreamRef = useRef(null);
+  const cameraStreamRef = useRef(null);
+  const currentCallRef = useRef(null);
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const senderRef = useRef(null);
 
-    // ✅ ОБНОВЛЁННЫЙ appId: 8b875c57f152fa6cee81b4
-    const firebaseConfig = {
-      apiKey:            "AIzaSyDCj2WqkiH0o0UerQLLgHZGq2YwOB0u98I",
-      authDomain:        "detskaya-odejda.firebaseapp.com",
-      projectId:         "detskaya-odejda",
-      storageBucket:     "detskaya-odejda.firebasestorage.app",
-      messagingSenderId: "1033590447197",
-      appId:             "1:1033590447197:web:8b875c57f152fa6cee81b4"
+  const initPeer = useCallback((attemptIndex = 0) => {
+    if (peerRef.current) {
+      try { peerRef.current.destroy(); } catch(e) {}
+      peerRef.current = null;
+    }
+
+    setStatus('connecting');
+    setError('');
+    
+    const serverConfig = PEER_SERVERS[attemptIndex] || {};
+    const serverName = serverConfig.host || 'PeerJS Cloud (по умолчанию)';
+    setStatusText(`Подключение к серверу: ${serverName}...`);
+
+    const shortId = generateShortId();
+    
+    const peerOptions = {
+      config: { iceServers: ICE_SERVERS },
+      debug: 1
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
-
-    // Зашифрованные учётные данные (Base64)
-    const _L = "TGlkZXIwMDFA";
-    const _P = "TGlkZXIwMDJA";
-    function checkCreds(l, p){ return btoa(l) === _L && btoa(p) === _P; }
-
-    const $ = id => document.getElementById(id);
-    const chatSvg = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/></svg>`;
-
-    function toast(msg, ms = 2600){
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), ms);
+    // Добавляем кастомный сервер если указан
+    if (serverConfig.host) {
+      peerOptions.host = serverConfig.host;
+      peerOptions.port = serverConfig.port;
+      peerOptions.path = serverConfig.path;
+      peerOptions.secure = serverConfig.secure;
     }
 
-    function show(screen){
-      ["screenClient","screenLogin","screenAdmin"].forEach(s =>
-        $(s).style.display = "none"
-      );
-      $(screen).style.display = "block";
+    let peer;
+    try {
+      peer = new Peer(shortId, peerOptions);
+    } catch (err) {
+      setError('Не удалось создать подключение: ' + err.message);
+      setStatus('error');
+      return;
     }
 
-    function openLB(src){
-      $("lbImg").src = "";
-      $("lb").classList.add("open");
-      setTimeout(() => { $("lbImg").src = src; }, 40);
-    }
-    function closeLB(){
-      $("lb").classList.remove("open");
-      setTimeout(() => { $("lbImg").src = ""; }, 500);
-    }
-    $("lb").addEventListener("click", closeLB);
-    $("lbClose").addEventListener("click", e => { e.stopPropagation(); closeLB(); });
-    $("lbImg").addEventListener("click", e => e.stopPropagation());
-
-    function compressImage(file, maxPx = 900, quality = 0.75){
-      return new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => {
-          const img = new Image();
-          img.onload = () => {
-            let w = img.width, h = img.height;
-            if (w > maxPx || h > maxPx){
-              if (w > h){ h = Math.round(h * maxPx / w); w = maxPx; }
-              else      { w = Math.round(w * maxPx / h); h = maxPx; }
-            }
-            const c = document.createElement("canvas");
-            c.width = w; c.height = h;
-            c.getContext("2d").drawImage(img, 0, 0, w, h);
-            resolve(c.toDataURL("image/jpeg", quality));
-          };
-          img.onerror = reject;
-          img.src = r.result;
-        };
-        r.onerror = reject;
-        r.readAsDataURL(file);
-      });
-    }
-
-    $("pimg").addEventListener("change", async () => {
-      const f = $("pimg").files?.[0];
-      if (!f){ $("prev").style.display = "none"; return; }
-      const b64 = await compressImage(f, 900, 0.78);
-      $("prev").src = b64;
-      $("prev").style.display = "block";
-    });
-
-    const productsCol = collection(db, "products");
-
-    async function getProducts(){
-      const snap = await getDocs(productsCol);
-      return snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-    }
-
-    async function loadProducts(){
-      $("grid").innerHTML = `<div class="loader"><span class="spin"></span><br>Загрузка...</div>`;
-      try{
-        renderGrid(await getProducts());
-      }catch(e){
-        $("grid").innerHTML = `<div class="errBox">⚠️ Ошибка: <b>${e.message}</b><br><br>Проверь Firestore Rules</div>`;
-      }
-    }
-
-    function renderGrid(items){
-      if (!items.length){
-        $("grid").innerHTML = `<div class="loader">Пока нет товаров 🛍️</div>`;
-        return;
-      }
-      $("grid").innerHTML = items.map(p => {
-        const img  = p.image || "https://placehold.co/600x600?text=Нет+фото";
-        const link = p.link  || "#";
-        const name = (p.title || "").replaceAll("<","&lt;");
-        const desc = (p.desc  || "").replaceAll("<","&lt;");
-        return `
-          <div class="card">
-            <img class="img" src="${img}" alt="Фото" loading="lazy" data-img="${img}">
-            <div class="body">
-              <div class="name">${name}</div>
-              <div class="desc">${desc}</div>
-              <a class="btn" target="_blank" href="${link}">${chatSvg} Написать</a>
-            </div>
-          </div>`;
-      }).join("");
-      $("grid").querySelectorAll("[data-img]").forEach(el =>
-        el.addEventListener("click", () => openLB(el.getAttribute("data-img")))
-      );
-    }
-
-    let adminCache = [];
-
-    async function loadAdminList(){
-      $("alist").innerHTML = `<div class="loader"><span class="spin"></span><br>Загрузка...</div>`;
-      try{
-        adminCache = await getProducts();
-        renderAdmin(adminCache);
-      }catch(e){
-        $("alist").innerHTML = `<div class="errBox">⚠️ Ошибка: <b>${e.message}</b><br>Проверь Firestore Rules</div>`;
-      }
-    }
-
-    function renderAdmin(items){
-      if (!items.length){
-        $("alist").innerHTML = `<div class="loader">Товаров пока нет. Нажми "+ Добавить"</div>`;
-        return;
-      }
-      $("alist").innerHTML = items.map(p => {
-        const img  = p.image || "https://placehold.co/200x200?text=Нет+фото";
-        const nm   = (p.title || "").replaceAll("<","&lt;");
-        const meta = (p.desc  || "").slice(0,60).replaceAll("<","&lt;");
-        return `
-          <div class="aItem">
-            <img src="${img}" alt="">
-            <div class="aInfo">
-              <div class="aName">${nm}</div>
-              <div class="aMeta">${meta}</div>
-            </div>
-            <div class="aAct">
-              <button class="iconBtn edit" data-edit="${p.id}">✏️</button>
-              <button class="iconBtn del"  data-del="${p.id}">🗑️</button>
-            </div>
-          </div>`;
-      }).join("");
-      $("alist").querySelectorAll("[data-edit]").forEach(b =>
-        b.addEventListener("click", () => startEdit(b.getAttribute("data-edit")))
-      );
-      $("alist").querySelectorAll("[data-del]").forEach(b =>
-        b.addEventListener("click", () => doDelete(b.getAttribute("data-del")))
-      );
-    }
-
-    function openForm(){
-      $("panel").style.display   = "block";
-      $("formTitle").textContent = "Новый товар";
-      $("pid").value = $("ptitle").value = $("pdesc").value =
-      $("plink").value = $("pimg").value = "";
-      $("prev").style.display = "none";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    function closeForm(){ $("panel").style.display = "none"; }
-
-    async function startEdit(id){
-      const p = adminCache.find(x => x.id === id);
-      if (!p) return;
-      $("panel").style.display   = "block";
-      $("formTitle").textContent = "Редактирование";
-      $("pid").value    = p.id;
-      $("ptitle").value = p.title || "";
-      $("pdesc").value  = p.desc  || "";
-      $("plink").value  = p.link  || "";
-      $("pimg").value   = "";
-      if (p.image){ $("prev").src = p.image; $("prev").style.display = "block"; }
-      else { $("prev").style.display = "none"; }
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    async function saveProduct(){
-      const id    = $("pid").value;
-      const title = $("ptitle").value.trim();
-      const desc  = $("pdesc").value.trim();
-      const link  = $("plink").value.trim() || "#";
-      if (!title) return toast("Введите название");
-
-      let image = null;
-      const f = $("pimg").files?.[0];
-      if (f){ toast("Сжимаю фото..."); image = await compressImage(f, 900, 0.78); }
-
-      try{
-        if (!id){
-          toast("Сохраняю...");
-          await addDoc(productsCol, {
-            title, desc, link, image: image || "", createdAt: Date.now()
-          });
-          toast("✅ Товар добавлен!");
-        }else{
-          toast("Обновляю...");
-          const payload = { title, desc, link };
-          if (image) payload.image = image;
-          await updateDoc(doc(db,"products",id), payload);
-          toast("✅ Обновлено!");
+    let connected = false;
+    const connectTimeout = setTimeout(() => {
+      if (!connected) {
+        console.warn('Таймаут подключения к серверу', serverName);
+        if (attemptIndex < PEER_SERVERS.length - 1) {
+          setServerAttempt(attemptIndex + 1);
+          initPeer(attemptIndex + 1);
+        } else {
+          setError('Не удалось подключиться ни к одному серверу. Проверьте интернет-соединение.');
+          setStatus('error');
+          setStatusText('Ошибка подключения');
         }
-        closeForm();
-        await loadAdminList();
-        await loadProducts();
-      }catch(e){
-        toast("Ошибка записи: " + e.message, 5000);
       }
-    }
+    }, 8000);
 
-    async function doDelete(id){
-      if (!confirm("Удалить товар?")) return;
-      try{
-        await deleteDoc(doc(db,"products",id));
-        toast("🗑️ Удалено");
-        await loadAdminList();
-        await loadProducts();
-      }catch(e){
-        toast("Ошибка: " + e.message, 4000);
-      }
-    }
-
-    function doLogin(){
-      const l = $("login").value.trim();
-      const p = $("pass").value.trim();
-      $("errMsg").style.display = "none";
-      if (checkCreds(l, p)){
-        sessionStorage.setItem("adm","1");
-        $("login").value = "";
-        $("pass").value  = "";
-        show("screenAdmin");
-        loadAdminList();
-      }else{
-        $("errMsg").style.display = "block";
-      }
-    }
-
-    function doLogout(){
-      sessionStorage.removeItem("adm");
-      show("screenClient");
-      toast("Вы вышли");
-    }
-
-    $("gear").addEventListener("click", () => {
-      if (sessionStorage.getItem("adm")){ show("screenAdmin"); loadAdminList(); }
-      else { show("screenLogin"); }
+    peer.on('open', (id) => {
+      connected = true;
+      clearTimeout(connectTimeout);
+      setMyId(id);
+      setStatus('connected');
+      setStatusText('🟢 Готов к звонкам');
+      console.log('Peer подключен с ID:', id);
     });
-    $("btnLogin").addEventListener    ("click", doLogin);
-    $("btnCancel").addEventListener   ("click", () => show("screenClient"));
-    $("btnOpenForm").addEventListener ("click", openForm);
-    $("btnCloseForm").addEventListener("click", closeForm);
-    $("btnSave").addEventListener     ("click", saveProduct);
-    $("btnLogout").addEventListener   ("click", doLogout);
-    [$("login"), $("pass")].forEach(el =>
-      el.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); })
-    );
 
-    // Старт
-    if (sessionStorage.getItem("adm")){
-      show("screenAdmin"); loadAdminList();
-    }else{
-      show("screenClient"); loadProducts();
-    }
+    peer.on('call', async (call) => {
+      try {
+        setStatusText('Входящий звонок...');
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 1280, height: 720 }, 
+          audio: true 
+        });
+        localStreamRef.current = stream;
+        cameraStreamRef.current = stream;
+        if (localVideoRef.current) localVideoRef.current.srcObject = stream;
 
-    // PWA
-    const manifest = {
-      name:"Детская Одежда", short_name:"Одежда",
-      start_url:"./", display:"standalone",
-      background_color:"#fdf1f4", theme_color:"#e97a95",
-      icons:[{ src:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2U5N2E5NSIvPjwvc3ZnPg==", sizes:"192x192", type:"image/svg+xml" }]
+        call.answer(stream);
+        currentCallRef.current = call;
+
+        call.on('stream', (remoteStream) => {
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play().catch(e => console.log('Автовоспр:', e));
+          }
+          setStatusText('🟢 Соединено');
+          setInCall(true);
+        });
+
+        call.on('close', () => handleEndCall());
+        call.on('error', (err) => {
+          console.error('Ошибка звонка:', err);
+          setError('Ошибка звонка: ' + err.message);
+        });
+      } catch (err) {
+        console.error('Ошибка медиа:', err);
+        setError('Нет доступа к камере/микрофону: ' + err.message);
+        call.close();
+      }
+    });
+
+    peer.on('error', (err) => {
+      console.error('Peer error:', err.type, err.message);
+      clearTimeout(connectTimeout);
+      
+      // Критические ошибки - пробуем другой сервер
+      if (!connected && (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error' || err.type === 'socket-closed')) {
+        if (attemptIndex < PEER_SERVERS.length - 1) {
+          console.log('Пробуем следующий сервер...');
+          setServerAttempt(attemptIndex + 1);
+          initPeer(attemptIndex + 1);
+          return;
+        }
+      }
+      
+      // Ошибки во время звонка
+      if (err.type === 'peer-unavailable') {
+        setError('Собеседник не найден. Проверьте ID или попросите его обновить страницу.');
+      } else if (err.type === 'unavailable-id') {
+        // ID занят - перегенерируем
+        initPeer(attemptIndex);
+        return;
+      } else if (err.type === 'disconnected') {
+        setError('Соединение с сервером потеряно. Пытаюсь переподключиться...');
+        setTimeout(() => {
+          if (peerRef.current && !peerRef.current.destroyed) {
+            peerRef.current.reconnect();
+          }
+        }, 2000);
+      } else {
+        setError('Ошибка: ' + (err.message || err.type));
+      }
+      
+      if (!connected) {
+        setStatus('error');
+        setStatusText('Ошибка подключения');
+      }
+    });
+
+    peer.on('disconnected', () => {
+      console.log('Peer disconnected, trying to reconnect...');
+      setStatusText('⚠️ Переподключение...');
+      setTimeout(() => {
+        if (peer && !peer.destroyed) {
+          try { peer.reconnect(); } catch(e) {}
+        }
+      }, 1000);
+    });
+
+    peerRef.current = peer;
+  }, []);
+
+  useEffect(() => {
+    initPeer(0);
+    return () => {
+      if (peerRef.current) {
+        try { peerRef.current.destroy(); } catch(e) {}
+      }
     };
-    const mLink = document.createElement("link");
-    mLink.rel = "manifest";
-    mLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:"application/json"}));
-    document.head.appendChild(mLink);
+  }, [initPeer]);
 
-    if ("serviceWorker" in navigator){
-      const sw = `
-        self.addEventListener('install',  () => self.skipWaiting());
-        self.addEventListener('activate', () => self.clients.claim());
-        self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-      `;
-      window.addEventListener("load", () =>
-        navigator.serviceWorker.register(
-          URL.createObjectURL(new Blob([sw],{type:"application/javascript"}))
-        ).catch(()=>{})
-      );
+  const startCall = async () => {
+    const targetId = remoteId.trim();
+    if (!targetId) {
+      setError('Введите ID собеседника');
+      return;
     }
-  </script>
+    if (targetId === myId) {
+      setError('Нельзя звонить самому себе');
+      return;
+    }
+    if (!peerRef.current || peerRef.current.destroyed) {
+      setError('Нет подключения к серверу');
+      return;
+    }
+    
+    setError('');
+    setStatusText('Соединение...');
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: 1280, height: 720 }, 
+        audio: true 
+      });
+      localStreamRef.current = stream;
+      cameraStreamRef.current = stream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+
+      const call = peerRef.current.call(targetId, stream);
+      if (!call) {
+        throw new Error('Не удалось инициировать звонок');
+      }
+      currentCallRef.current = call;
+
+      let streamReceived = false;
+      const streamTimeout = setTimeout(() => {
+        if (!streamReceived) {
+          setError('Собеседник не отвечает. Убедитесь, что он онлайн.');
+          handleEndCall();
+        }
+      }, 15000);
+
+      call.on('stream', (remoteStream) => {
+        streamReceived = true;
+        clearTimeout(streamTimeout);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play().catch(e => console.log(e));
+        }
+        setStatusText('🟢 Соединено');
+        setInCall(true);
+      });
+
+      call.on('close', () => {
+        clearTimeout(streamTimeout);
+        handleEndCall();
+      });
+      call.on('error', (err) => {
+        clearTimeout(streamTimeout);
+        setError('Ошибка звонка: ' + err.message);
+        handleEndCall();
+      });
+    } catch (err) {
+      console.error(err);
+      setError('Нет доступа к камере/микрофону: ' + err.message);
+      setStatusText('🟢 Готов к звонкам');
+    }
+  };
+
+  const toggleMic = () => {
+    if (localStreamRef.current) {
+      const track = localStreamRef.current.getAudioTracks()[0];
+      if (track) {
+        track.enabled = !track.enabled;
+        setMicOn(track.enabled);
+      }
+    }
+  };
+
+  const toggleCam = () => {
+    if (localStreamRef.current) {
+      const track = localStreamRef.current.getVideoTracks()[0];
+      if (track) {
+        track.enabled = !track.enabled;
+        setCamOn(track.enabled);
+      }
+    }
+  };
+
+  const toggleScreenShare = async () => {
+    if (!currentCallRef.current) return;
+
+    if (!screenSharing) {
+      try {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ 
+          video: true, 
+          audio: true 
+        });
+        const screenTrack = screenStream.getVideoTracks()[0];
+
+        const pc = currentCallRef.current.peerConnection;
+        const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
+        
+        if (sender) {
+          await sender.replaceTrack(screenTrack);
+          senderRef.current = sender;
+        }
+
+        if (localVideoRef.current) localVideoRef.current.srcObject = screenStream;
+        setScreenSharing(true);
+        screenTrack.onended = () => stopScreenShare();
+      } catch (err) {
+        if (err.name !== 'NotAllowedError') {
+          setError('Не удалось начать демонстрацию: ' + err.message);
+        }
+      }
+    } else {
+      stopScreenShare();
+    }
+  };
+
+  const stopScreenShare = async () => {
+    if (senderRef.current && cameraStreamRef.current) {
+      const videoTrack = cameraStreamRef.current.getVideoTracks()[0];
+      if (videoTrack) await senderRef.current.replaceTrack(videoTrack);
+      if (localVideoRef.current) localVideoRef.current.srcObject = cameraStreamRef.current;
+    }
+    setScreenSharing(false);
+  };
+
+  const handleEndCall = () => {
+    if (currentCallRef.current) {
+      try { currentCallRef.current.close(); } catch(e) {}
+      currentCallRef.current = null;
+    }
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach(t => t.stop());
+      localStreamRef.current = null;
+    }
+    if (cameraStreamRef.current && cameraStreamRef.current !== localStreamRef.current) {
+      cameraStreamRef.current.getTracks().forEach(t => t.stop());
+    }
+    cameraStreamRef.current = null;
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+    setInCall(false);
+    setScreenSharing(false);
+    setMicOn(true);
+    setCamOn(true);
+    setStatusText('🟢 Готов к звонкам');
+    setRemoteId('');
+  };
+
+  const copyId = () => {
+    if (!myId) return;
+    navigator.clipboard.writeText(myId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      // Fallback для старых браузеров
+      const ta = document.createElement('textarea');
+      ta.value = myId;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch(e) {}
+      document.body.removeChild(ta);
+    });
+  };
+
+  const retryConnection = () => {
+    setServerAttempt(0);
+    initPeer(0);
+  };
+
+  return (
+    <div className="app">
+      <div className="header">
+        <h1>📹 SEDA2026</h1>
+        <p>Видеозвонки • Голосовая связь • Демонстрация экрана</p>
+      </div>
+
+      {error && <div className="error">⚠️ {error}</div>}
+
+      {!inCall ? (
+        <div className="lobby">
+          <div className={`status ${status}`}>
+            {status === 'connecting' && <span className="spinner"></span>}
+            {statusText}
+          </div>
+
+          {status === 'error' && (
+            <button className="retry-btn" onClick={retryConnection}>
+              🔄 Повторить подключение
+            </button>
+          )}
+
+          {myId && (
+            <div>
+              <p style={{marginBottom: '5px', marginTop: '15px'}}>Ваш ID (передайте собеседнику):</p>
+              <div className="my-id">
+                <strong>{myId}</strong>
+                <button className="copy-btn" onClick={copyId}>
+                  {copied ? '✓ Скопировано' : '📋 Копировать'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <p style={{marginTop: '20px', marginBottom: '5px'}}>ID собеседника:</p>
+          <input
+            type="text"
+            placeholder="Например: seda-abc123"
+            value={remoteId}
+            onChange={(e) => setRemoteId(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && startCall()}
+          />
+          <button onClick={startCall} disabled={!myId || status !== 'connected'}>
+            📞 Позвонить
+          </button>
+
+          <div className="info">
+            <strong>Как пользоваться:</strong><br/>
+            1. Скопируйте свой ID и отправьте его собеседнику<br/>
+            2. Либо вставьте ID собеседника и нажмите "Позвонить"<br/>
+            3. Разрешите доступ к камере и микрофону<br/>
+            4. Во время звонка можно включить демонстрацию экрана 🖥️
+                      </div>
+
+          {serverAttempt > 0 && (
+            <div className="server-info">
+              Попытка подключения к серверу: {serverAttempt + 1}
+            </div>
+          )}
+
+          <div className="server-info">
+            💡 Если не работает - проверьте интернет или попробуйте открыть через HTTPS
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="status connected">{statusText}</div>
+          
+          <div className="videos">
+            <div className="video-container">
+              <video ref={localVideoRef} autoPlay playsInline muted />
+              <div className="video-label">
+                Вы {screenSharing && '🖥️ (экран)'} {!micOn && '🔇'} {!camOn && '📷❌'}
+              </div>
+            </div>
+            <div className="video-container">
+              <video ref={remoteVideoRef} autoPlay playsInline />
+              <div className="video-label">Собеседник</div>
+            </div>
+          </div>
+
+          <div className="controls">
+            <button 
+              className={`control-btn ${!micOn ? 'off' : ''}`} 
+              onClick={toggleMic} 
+              title={micOn ? 'Выключить микрофон' : 'Включить микрофон'}
+            >
+              {micOn ? '🎤' : '🔇'}
+            </button>
+            <button 
+              className={`control-btn ${!camOn ? 'off' : ''}`} 
+              onClick={toggleCam}
+              title={camOn ? 'Выключить камеру' : 'Включить камеру'}
+            >
+              {camOn ? '📹' : '📷'}
+            </button>
+            <button 
+              className={`control-btn screen ${screenSharing ? 'active' : ''}`} 
+              onClick={toggleScreenShare}
+              title={screenSharing ? 'Остановить демонстрацию' : 'Демонстрация экрана'}
+            >
+              🖥️
+            </button>
+            <button 
+              className="control-btn end" 
+              onClick={handleEndCall}
+              title="Завершить звонок"
+            >
+              📵
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
